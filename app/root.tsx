@@ -10,11 +10,11 @@ import {
 
 import { Header, Footer } from "#app/components/organisms";
 
-import faviconAppleTouchIcon from "./assets/apple-touch-icon.png?url";
-import faviconPng from "./assets/favicon-96x96.png?url";
-import faviconIco from "./assets/favicon.ico?url";
-import faviconSvg from "./assets/favicon.svg?url";
-import webManifest from "./assets/site.webmanifest?url";
+import faviconAppleTouchIcon from "./assets/favicon/apple-touch-icon.png?url";
+import faviconPng from "./assets/favicon/favicon-96x96.png?url";
+import faviconIco from "./assets/favicon/favicon.ico?url";
+import faviconSvg from "./assets/favicon/favicon.svg?url";
+import webManifest from "./assets/favicon/site.webmanifest?url";
 
 import fontStylesheet from "./styles/font.css?url";
 import tailwindStylesheet from "./styles/tailwind.css?url";
