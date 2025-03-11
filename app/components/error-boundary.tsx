@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/react";
 import { getErrorMessage } from "#app/utils/misc.ts";
 import {
   ErrorResponse,
@@ -7,6 +8,7 @@ import {
   useRouteError,
 } from "react-router";
 import { JSX } from "react/jsx-runtime";
+import { useEffect } from "react";
 
 type StatusHandler = (info: {
   error: ErrorResponse;
@@ -28,10 +30,17 @@ export const GeneralErrorBoundary = ({
 }) => {
   const error = useRouteError();
   const params = useParams();
+  const isResponse = isRouteErrorResponse(error);
 
   if (typeof document !== "undefined") {
     console.error("🛑", error);
   }
+
+  useEffect(() => {
+    if (isResponse) return;
+
+    captureException(error);
+  }, [error, isResponse]);
 
   return (
     <div>

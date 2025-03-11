@@ -6,11 +6,17 @@
 
 import { PassThrough } from "node:stream";
 
-import { type AppLoadContext, type EntryContext } from "react-router";
+import {
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  type AppLoadContext,
+  type EntryContext,
+} from "react-router";
 import { createReadableStreamFromReadable } from "@react-router/node";
 import { ServerRouter } from "react-router";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
+import * as Sentry from "@sentry/node";
 import { init, getEnv } from "./utils/env.server";
 
 export const streamTimeout = 5000;
@@ -133,4 +139,19 @@ function handleBrowserRequest(
 
     setTimeout(abort, streamTimeout);
   });
+}
+
+export function handleError(
+  error: unknown,
+  { request }: LoaderFunctionArgs | ActionFunctionArgs
+): void {
+  if (request.signal.aborted) return;
+
+  if (error instanceof Error) {
+    console.error("🛑", String(error.stack));
+    void Sentry.captureException(error);
+  } else {
+    console.error("🛑", error);
+    Sentry.captureException(error);
+  }
 }

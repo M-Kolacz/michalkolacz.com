@@ -3,6 +3,10 @@ import { z } from "zod";
 const schema = z.object({
   NODE_ENV: z.enum(["production", "development", "test"] as const),
   GITHUB_TOKEN: z.string(),
+  SENTRY_AUTH_TOKEN: z.string(),
+  SENTRY_ORG: z.string(),
+  SENTRY_PROJECT: z.string(),
+  SENTRY_DSN: z.string(),
 });
 
 declare global {
@@ -28,6 +32,7 @@ export const init = () => {
 
 export const getEnv = () => ({
   MODE: process.env.NODE_ENV,
+  SENTRY_DSN: process.env.SENTRY_DSN,
 });
 
 type ENV = ReturnType<typeof getEnv>;
