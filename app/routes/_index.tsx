@@ -1,6 +1,6 @@
 import { Link, type MetaFunction } from "react-router";
-import { Github, Linkedin, X } from "lucide-react";
 import { Button } from "#app/components/ui/button.tsx";
+import { Icon } from "#app/components/ui/icon.tsx";
 
 import meSrc from "#app/assets/me.avif?url";
 
@@ -39,7 +39,7 @@ export default function Index() {
                 rel="noopener noreferrer"
                 className="text-gray-600 hover:text-[#0047AB] transition-colors"
               >
-                <Github className="w-5 h-5" />
+                <Icon name="github" size="xl" />
                 <span className="sr-only">GitHub</span>
               </a>
               <a
@@ -48,7 +48,7 @@ export default function Index() {
                 rel="noopener noreferrer"
                 className="text-gray-600 hover:text-[#0047AB] transition-colors"
               >
-                <Linkedin className="w-5 h-5" />
+                <Icon name="linkedin" size="xl" />
                 <span className="sr-only">LinkedIn</span>
               </a>
               <a
@@ -57,7 +57,7 @@ export default function Index() {
                 rel="noopener noreferrer"
                 className="text-gray-600 hover:text-[#0047AB] transition-colors"
               >
-                <X className="w-5 h-5" />
+                <Icon name="twitter" size="xl" />
                 <span className="sr-only">Twitter</span>
               </a>
             </div>
