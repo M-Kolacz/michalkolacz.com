@@ -5,13 +5,14 @@ import { codecovVitePlugin } from "@codecov/vite-plugin";
 import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 const MODE = process.env.NODE_ENV;
+const isStorybook = process.env.STORYBOOK === "true";
 
 export default defineConfig({
   build: {
     assetsInlineLimit: 0,
   },
   plugins: [
-    reactRouter(),
+    isStorybook ? null : reactRouter(),
     tsconfigPaths(),
     process.env.SENTRY_AUTH_TOKEN
       ? sentryVitePlugin({
