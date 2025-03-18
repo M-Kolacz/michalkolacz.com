@@ -1,8 +1,8 @@
+import { codecovVitePlugin } from "@codecov/vite-plugin";
 import { reactRouter } from "@react-router/dev/vite";
+import { sentryVitePlugin } from "@sentry/vite-plugin";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-import { codecovVitePlugin } from "@codecov/vite-plugin";
-import { sentryVitePlugin } from "@sentry/vite-plugin";
 
 const MODE = process.env.NODE_ENV;
 const isStorybook = process.env.STORYBOOK === "true";

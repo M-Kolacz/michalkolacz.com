@@ -1,13 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { createRoutesStub } from "react-router";
+
 import { Footer } from "#app/components/organisms/footer.tsx";
 import { Header } from "#app/components/organisms/header.tsx";
 
-import Homepage from "./_index";
+import Homepage from "./homepage.tsx";
 
 // More on how to set up stories at: https://storybook.js.org/docs/writing-stories#default-export
 const meta = {
-  title: "UI/Homepage",
+  title: "homepage/components/pages/homepage",
   component: Homepage,
   parameters: {
     // Optional parameter to center the component in the Canvas. More info: https://storybook.js.org/docs/configure/story-layout

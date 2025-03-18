@@ -1,5 +1,6 @@
 import type { StorybookConfig } from "@storybook/react-vite";
 import { mergeConfig } from "vite";
+
 import path from "path";
 
 process.env.STORYBOOK = "true";
@@ -20,13 +21,13 @@ const config: StorybookConfig = {
     return mergeConfig(config, {
       resolve: {
         alias: {
-          "#app/utils/cache.server.ts": path.resolve(
+          "#app/features/blog/utils/cache.server.ts": path.resolve(
             __dirname,
-            "../app/mocks/cache.server.ts"
+            "../app/features/blog/mocks/cache.server.ts"
           ),
-          "#app/utils/blog.server.ts": path.resolve(
+          "#app/features/blog/utils/blog.server.ts": path.resolve(
             __dirname,
-            "../app/mocks/blog.server.ts"
+            "../app/features/blog/mocks/blog.server.ts"
           ),
         },
       },
