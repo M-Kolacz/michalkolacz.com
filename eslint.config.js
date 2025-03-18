@@ -3,6 +3,7 @@ import pluginJs from "@eslint/js";
 import tseslint from "typescript-eslint";
 import pluginReact from "eslint-plugin-react";
 import pluginStorybook from "eslint-plugin-storybook";
+import boundaries from 'eslint-plugin-boundaries';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -24,4 +25,78 @@ export default [
       ...pluginStorybook.configs.recommended.rules,
     },
   },
+  {
+    plugins: {
+      boundaries,
+    },
+    settings: {
+      "boundaries/include": ["app/**/*"],
+      "import/resolver": {
+        alias: {
+          map: [["#app", "./app"]],
+          extensions: [".js", ".jsx", ".ts", ".tsx"]
+        }
+      },
+      "boundaries/elements": [
+        {
+          "mode": "full",
+          "type": "shared",
+          "pattern": [
+            "app/assets/**/*",
+            "app/components/**/*",
+            "app/styles/**/*",
+            "app/utils/**/*",
+          ]
+        },
+        {
+          "mode": "full",
+          "type": "feature",
+          "capture": ["featureName"],
+          "pattern": ["app/features/*/**/*"]
+        },
+        {
+          "mode": "full",
+          "type": "app",
+          "capture": ["_", "fileName"],
+          "pattern": ["app/**/*"]
+        },
+        {
+          "mode": "full",
+          "type": "neverImport",
+          "pattern": ["app/routes.ts"]
+        }
+      ]
+    },
+    rules: {
+      "boundaries/no-unknown": ["error"],
+      "boundaries/no-unknown-files": ["error"],
+      "boundaries/element-types": [
+        "error",
+        {
+          "default": "disallow",
+          "rules": [
+            {
+              "from": ["shared"],
+              "allow": ["shared"]
+            },
+            {
+              "from": ["feature"],
+              "allow": [
+                "shared",
+                ["feature", { "featureName": "${from.featureName}" }]
+              ]
+            },
+            {
+              "from": ["app", "neverImport"],
+              "allow": ["shared", "feature"]
+            },
+            {
+              "from": ["app"],
+              "allow": [["app", { "fileName": "*.css" }]]
+            }
+          ]
+        }
+      ]
+    }
+  }
 ];
