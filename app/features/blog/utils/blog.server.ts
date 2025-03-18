@@ -1,7 +1,7 @@
-import { octokit } from "#blog/utils/github.server.ts";
+import { octokit } from "#app/features/blog/utils/github.server.ts";
 import { invariantResponse } from "#app/utils/invariant.ts";
 import { bundleMDX } from "mdx-bundler";
-import { blogCache } from "#blog/utils/cache.server.ts";
+import { blogCache } from "#app/features/blog/utils/cache.server.ts";
 
 export const getBlogPosts = async () => {
   const octokitResult = await octokit.repos.getContent({

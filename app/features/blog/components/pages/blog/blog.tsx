@@ -1,11 +1,9 @@
 import { useLoaderData, type MetaFunction } from "react-router";
-import { ArticleCard } from "#blog/components/molecules";
-import { blogCache } from "#blog/utils/cache.server.ts";
-import { Post } from "#blog/types/blog.ts";
+import { ArticleCard } from "#app/features/blog/components/molecules";
+import { blogCache } from "#app/features/blog/utils/cache.server.ts";
+import { Post } from "#app/features/blog/types/blog.ts";
 
 import { getBlogPosts } from "#app/features/blog/utils/blog.server.ts";
-
-getBlogPosts();
 
 export const meta: MetaFunction = () => {
   return [

@@ -8,9 +8,9 @@ import { Button } from "#app/components/atoms";
 import { GeneralErrorBoundary } from "#app/components/pages/error-boundary/error-boundary.tsx";
 import { invariantResponse } from "#app/utils/invariant.ts";
 
-import { blogCache } from "#blog/utils/cache.server.ts";
-import { getBlogPost } from "#blog/utils/blog.server.ts";
-import { Post } from "#blog/types/blog.ts";
+import { blogCache } from "#app/features/blog/utils/cache.server.ts";
+import { getBlogPost } from "#app/features/blog/utils/blog.server.ts";
+import { Post } from "#app/features/blog/types/blog.ts";
 
 export const meta: MetaFunction = ({ params }) => {
   const postTitle = params.postTitle;

@@ -4,9 +4,7 @@
   "sideEffects": false,
   "type": "module",
   "imports": {
-    "#app/*": "./app/*",
-    "#blog/*": "./app/features/blog/*",
-    "#homepage/*": "./app/features/homepage/*"
+    "#app/*": "./app/*"
   },
   "engines": {
     "node": "20"
