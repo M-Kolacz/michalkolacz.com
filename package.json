@@ -16,7 +16,7 @@
     "build:server": "tsx ./other/build-server.ts",
     "dev": "node ./server/dev-server.js",
     "start": "cross-env NODE_ENV=production node .",
-    "lint": "eslint . --fix",
+    "lint": "eslint .",
     "typecheck": "react-router typegen && tsc",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
