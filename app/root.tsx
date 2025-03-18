@@ -20,7 +20,7 @@ import fontStylesheet from "./styles/font.css?url";
 import tailwindStylesheet from "./styles/tailwind.css?url";
 
 import { getEnv } from "./utils/env.server";
-import { GeneralErrorBoundary } from "./components/error-boundary";
+import { GeneralErrorBoundary } from "./components/pages/error-boundary/error-boundary";
 
 export const meta: MetaFunction = () => [
   { name: "apple-mobile-web-app-title", content: "michalkolacz.com" },

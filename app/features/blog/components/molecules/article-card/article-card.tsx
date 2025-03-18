@@ -1,12 +1,12 @@
 import { Link } from "react-router";
-import { Button } from "#app/components/ui/button.tsx";
-import type { Article } from "#app/utils/data.ts";
+import { Button } from "#app/components/atoms";
+import type { Post } from "#blog/types/blog.ts";
 
 interface ArticleCardProps {
-  article: Omit<Article, "content">;
+  article: Omit<Post, "content">;
 }
 
-export default function ArticleCard({ article }: ArticleCardProps) {
+export const ArticleCard = ({ article }: ArticleCardProps) => {
   return (
     <article className="bg-white dark:bg-slate-900 rounded-lg shadow-soft p-6 transition-all hover:shadow-md">
       <h3 className="text-xl font-semibold mb-2 text-blue-800 dark:text-blue-400">
@@ -25,4 +25,4 @@ export default function ArticleCard({ article }: ArticleCardProps) {
       </Link>
     </article>
   );
-}
+};

@@ -1,14 +1,16 @@
 import { Link, LoaderFunctionArgs, useLoaderData } from "react-router";
-import { Button } from "#app/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { type MetaFunction } from "react-router";
-import { GeneralErrorBoundary } from "#app/components/error-boundary.tsx";
 import { MDXProvider } from "@mdx-js/react";
 import { getMDXComponent } from "mdx-bundler/client";
-import { blogCache } from "#app/utils/cache.server.ts";
-import { getBlogPost } from "#app/utils/blog.server.ts";
+
+import { Button } from "#app/components/atoms";
+import { GeneralErrorBoundary } from "#app/components/pages/error-boundary/error-boundary.tsx";
 import { invariantResponse } from "#app/utils/invariant.ts";
-import { Post } from "#app/types/blog.ts";
+
+import { blogCache } from "#blog/utils/cache.server.ts";
+import { getBlogPost } from "#blog/utils/blog.server.ts";
+import { Post } from "#blog/types/blog.ts";
 
 export const meta: MetaFunction = ({ params }) => {
   const postTitle = params.postTitle;

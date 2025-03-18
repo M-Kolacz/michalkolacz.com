@@ -6,7 +6,8 @@
     "**/.server/**/*.tsx",
     "**/.client/**/*.ts",
     "**/.client/**/*.tsx",
-    ".react-router/types/**/*"
+    ".react-router/types/**/*",
+    "app/components/pages/error-boundary"
   ],
   "compilerOptions": {
     "lib": ["DOM", "DOM.Iterable", "ES2022"],
@@ -26,7 +27,9 @@
     "baseUrl": ".",
     "allowImportingTsExtensions": true,
     "paths": {
-      "#app/*": ["./app/*"]
+      "#app/*": ["./app/*"],
+      "#blog/*": ["./app/features/blog/*"],
+      "#homepage/*": ["./app/features/homepage/*"]
     },
     // Vite takes care of building everything, not tsc.
     "noEmit": true,

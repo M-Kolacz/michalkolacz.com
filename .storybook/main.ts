@@ -20,13 +20,13 @@ const config: StorybookConfig = {
     return mergeConfig(config, {
       resolve: {
         alias: {
-          "#app/utils/cache.server.ts": path.resolve(
+          "#blog/utils/cache.server.ts": path.resolve(
             __dirname,
-            "../app/mocks/cache.server.ts"
+            "../app/features/blog/mocks/cache.server.ts"
           ),
-          "#app/utils/blog.server.ts": path.resolve(
+          "#blog/utils/blog.server.ts": path.resolve(
             __dirname,
-            "../app/mocks/blog.server.ts"
+            "../app/features/blog/mocks/blog.server.ts"
           ),
         },
       },
