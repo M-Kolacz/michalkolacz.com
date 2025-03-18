@@ -1,5 +1,5 @@
 import pluginJs from "@eslint/js";
-import boundaries from 'eslint-plugin-boundaries';
+import boundaries from "eslint-plugin-boundaries";
 import pluginImport from "eslint-plugin-import";
 import pluginReact from "eslint-plugin-react";
 import pluginStorybook from "eslint-plugin-storybook";
@@ -35,38 +35,38 @@ export default [
       "import/resolver": {
         alias: {
           map: [["#app", "./app"]],
-          extensions: [".js", ".jsx", ".ts", ".tsx"]
-        }
+          extensions: [".js", ".jsx", ".ts", ".tsx"],
+        },
       },
       "boundaries/elements": [
         {
-          "mode": "full",
-          "type": "shared",
-          "pattern": [
+          mode: "full",
+          type: "shared",
+          pattern: [
             "app/assets/**/*",
             "app/components/**/*",
             "app/styles/**/*",
             "app/utils/**/*",
-          ]
+          ],
         },
         {
-          "mode": "full",
-          "type": "feature",
-          "capture": ["featureName"],
-          "pattern": ["app/features/*/**/*"]
+          mode: "full",
+          type: "feature",
+          capture: ["featureName"],
+          pattern: ["app/features/*/**/*"],
         },
         {
-          "mode": "full",
-          "type": "app",
-          "capture": ["_", "fileName"],
-          "pattern": ["app/**/*"]
+          mode: "full",
+          type: "app",
+          capture: ["_", "fileName"],
+          pattern: ["app/**/*"],
         },
         {
-          "mode": "full",
-          "type": "neverImport",
-          "pattern": ["app/routes.ts"]
-        }
-      ]
+          mode: "full",
+          type: "neverImport",
+          pattern: ["app/routes.ts"],
+        },
+      ],
     },
     rules: {
       "boundaries/no-unknown": ["error"],
@@ -74,31 +74,31 @@ export default [
       "boundaries/element-types": [
         "error",
         {
-          "default": "disallow",
-          "rules": [
+          default: "disallow",
+          rules: [
             {
-              "from": ["shared"],
-              "allow": ["shared"]
+              from: ["shared"],
+              allow: ["shared"],
             },
             {
-              "from": ["feature"],
-              "allow": [
+              from: ["feature"],
+              allow: [
                 "shared",
-                ["feature", { "featureName": "${from.featureName}" }]
-              ]
+                ["feature", { featureName: "${from.featureName}" }],
+              ],
             },
             {
-              "from": ["app", "neverImport"],
-              "allow": ["shared", "feature"]
+              from: ["app", "neverImport"],
+              allow: ["shared", "feature"],
             },
             {
-              "from": ["app"],
-              "allow": [["app", { "fileName": "*.css" }]]
-            }
-          ]
-        }
-      ]
-    }
+              from: ["app"],
+              allow: [["app", { fileName: "*.css" }]],
+            },
+          ],
+        },
+      ],
+    },
   },
   {
     plugins: {
@@ -108,24 +108,24 @@ export default [
       "import/order": [
         "error",
         {
-          "groups": ["external", "internal", "parent", "sibling", "index"],
-          "pathGroups": [
+          groups: ["external", "internal", "parent", "sibling", "index"],
+          pathGroups: [
             {
-              "pattern": "#app/features/**",
-              "group": "internal",
-              "position": "after"
+              pattern: "#app/features/**",
+              group: "internal",
+              position: "after",
             },
             {
-              "pattern": "#app/**",
-              "group": "internal",
-              "position": "before"
-            }
+              pattern: "#app/**",
+              group: "internal",
+              position: "before",
+            },
           ],
-          "pathGroupsExcludedImportTypes": [],
+          pathGroupsExcludedImportTypes: [],
           "newlines-between": "always",
-          "alphabetize": { "order": "asc", "caseInsensitive": true }
-        }
-      ]
-    }
-  }
+          alphabetize: { order: "asc", caseInsensitive: true },
+        },
+      ],
+    },
+  },
 ];

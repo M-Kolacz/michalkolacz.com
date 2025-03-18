@@ -4,8 +4,6 @@ import { defineWorkspace } from "vitest/config";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-
-
 const dirname =
   typeof __dirname !== "undefined"
     ? __dirname

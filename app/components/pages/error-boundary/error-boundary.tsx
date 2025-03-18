@@ -11,7 +11,6 @@ import {
 
 import { getErrorMessage } from "#app/utils/misc.ts";
 
-
 type StatusHandler = (info: {
   error: ErrorResponse;
   params: Params;
