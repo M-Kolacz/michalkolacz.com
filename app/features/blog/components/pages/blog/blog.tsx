@@ -1,7 +1,5 @@
 import { useLoaderData, type MetaFunction } from "react-router";
 
-import { invariantResponse } from "#app/utils/invariant.ts";
-
 import { ArticleCard } from "#app/features/blog/components/molecules";
 import { Post } from "#app/features/blog/types/blog.ts";
 import { getBlogPosts } from "#app/features/blog/utils/blog.server.ts";
@@ -20,7 +18,6 @@ export const loader = async () => {
     return {
       posts: cachedPosts,
     };
-  invariantResponse(cachedPosts, "Posts not found in cache");
   const posts = await getBlogPosts();
   blogCache.set("posts", posts);
   return {
