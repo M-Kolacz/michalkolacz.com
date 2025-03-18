@@ -1,9 +1,10 @@
-import globals from "globals";
 import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
+import boundaries from 'eslint-plugin-boundaries';
+import pluginImport from "eslint-plugin-import";
 import pluginReact from "eslint-plugin-react";
 import pluginStorybook from "eslint-plugin-storybook";
-import boundaries from 'eslint-plugin-boundaries';
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -95,6 +96,34 @@ export default [
               "allow": [["app", { "fileName": "*.css" }]]
             }
           ]
+        }
+      ]
+    }
+  },
+  {
+    plugins: {
+      import: pluginImport,
+    },
+    rules: {
+      "import/order": [
+        "error",
+        {
+          "groups": ["external", "internal", "parent", "sibling", "index"],
+          "pathGroups": [
+            {
+              "pattern": "#app/features/**",
+              "group": "internal",
+              "position": "after"
+            },
+            {
+              "pattern": "#app/**",
+              "group": "internal",
+              "position": "before"
+            }
+          ],
+          "pathGroupsExcludedImportTypes": [],
+          "newlines-between": "always",
+          "alphabetize": { "order": "asc", "caseInsensitive": true }
         }
       ]
     }

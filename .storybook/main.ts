@@ -1,5 +1,6 @@
 import type { StorybookConfig } from "@storybook/react-vite";
 import { mergeConfig } from "vite";
+
 import path from "path";
 
 process.env.STORYBOOK = "true";

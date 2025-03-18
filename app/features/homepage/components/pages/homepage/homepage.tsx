@@ -1,4 +1,5 @@
 import { Link, type MetaFunction } from "react-router";
+
 import { Button, Icon } from "#app/components/atoms";
 
 import meSrc from "#app/features/homepage/assets/me.avif?url";

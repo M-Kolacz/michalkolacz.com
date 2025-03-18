@@ -1,9 +1,11 @@
 import { useLoaderData, type MetaFunction } from "react-router";
-import { ArticleCard } from "#app/features/blog/components/molecules";
-import { blogCache } from "#app/features/blog/utils/cache.server.ts";
-import { Post } from "#app/features/blog/types/blog.ts";
 
+import { invariantResponse } from "#app/utils/invariant.ts";
+
+import { ArticleCard } from "#app/features/blog/components/molecules";
+import { Post } from "#app/features/blog/types/blog.ts";
 import { getBlogPosts } from "#app/features/blog/utils/blog.server.ts";
+import { blogCache } from "#app/features/blog/utils/cache.server.ts";
 
 export const meta: MetaFunction = () => {
   return [
@@ -18,6 +20,7 @@ export const loader = async () => {
     return {
       posts: cachedPosts,
     };
+  invariantResponse(cachedPosts, "Posts not found in cache");
   const posts = await getBlogPosts();
   blogCache.set("posts", posts);
   return {

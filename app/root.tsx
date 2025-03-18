@@ -15,12 +15,10 @@ import faviconPng from "./assets/favicon/favicon-96x96.png?url";
 import faviconIco from "./assets/favicon/favicon.ico?url";
 import faviconSvg from "./assets/favicon/favicon.svg?url";
 import webManifest from "./assets/favicon/site.webmanifest?url";
-
+import { GeneralErrorBoundary } from "./components/pages/error-boundary/error-boundary";
 import fontStylesheet from "./styles/font.css?url";
 import tailwindStylesheet from "./styles/tailwind.css?url";
-
 import { getEnv } from "./utils/env.server";
-import { GeneralErrorBoundary } from "./components/pages/error-boundary/error-boundary";
 
 export const meta: MetaFunction = () => [
   { name: "apple-mobile-web-app-title", content: "michalkolacz.com" },
