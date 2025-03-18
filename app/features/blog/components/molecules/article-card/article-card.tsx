@@ -3,7 +3,7 @@ import { Button } from "#app/components/atoms";
 import type { Post } from "#blog/types/blog.ts";
 
 interface ArticleCardProps {
-  article: Omit<Post, "content">;
+  article: Pick<Post, "title" | "date" | "excerpt" | "slug">;
 }
 
 export const ArticleCard = ({ article }: ArticleCardProps) => {
