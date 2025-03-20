@@ -14,12 +14,15 @@ export const meta: MetaFunction = () => {
 
 export const loader = async () => {
   const cachedPosts = blogCache.get<Omit<Post, "code">[]>("posts");
+
   if (cachedPosts)
     return {
       posts: cachedPosts,
     };
+
   const posts = await getBlogPosts();
   blogCache.set("posts", posts);
+
   return {
     posts,
   };
