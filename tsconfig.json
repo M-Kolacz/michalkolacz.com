@@ -27,7 +27,8 @@
     "baseUrl": ".",
     "allowImportingTsExtensions": true,
     "paths": {
-      "#app/*": ["./app/*"]
+      "#app/*": ["./app/*"],
+      "#tests/*": ["./tests/*"]
     },
     // Vite takes care of building everything, not tsc.
     "noEmit": true,

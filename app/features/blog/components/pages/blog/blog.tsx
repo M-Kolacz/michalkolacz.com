@@ -14,12 +14,15 @@ export const meta: MetaFunction = () => {
 
 export const loader = async () => {
   const cachedPosts = blogCache.get<Omit<Post, "code">[]>("posts");
+
   if (cachedPosts)
     return {
       posts: cachedPosts,
     };
+
   const posts = await getBlogPosts();
   blogCache.set("posts", posts);
+
   return {
     posts,
   };
@@ -39,6 +42,9 @@ export default function HomePage() {
           {posts.map((article) => (
             <ArticleCard key={article.title} article={article} />
           ))}
+          {posts.length === 0 && (
+            <div className="text-center text-gray-500">No posts found</div>
+          )}
         </div>
       </div>
     </>
