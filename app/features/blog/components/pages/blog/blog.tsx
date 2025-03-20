@@ -42,6 +42,9 @@ export default function HomePage() {
           {posts.map((article) => (
             <ArticleCard key={article.title} article={article} />
           ))}
+          {posts.length === 0 && (
+            <div className="text-center text-gray-500">No posts found</div>
+          )}
         </div>
       </div>
     </>

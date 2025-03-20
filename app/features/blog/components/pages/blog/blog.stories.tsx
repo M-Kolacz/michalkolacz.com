@@ -5,6 +5,8 @@ import { layoutDecorator } from "#app/utils/storybook.tsx";
 
 import BlogPage from "./blog";
 
+import { createBlogPosts } from "#tests/mocks/blog.ts";
+
 const meta = {
   title: "blog/components/pages/Blog page",
   component: BlogPage,
@@ -26,7 +28,7 @@ export const WithPosts: Story = {
           Component: Story,
           loader: () => {
             return {
-              posts: [],
+              posts: createBlogPosts(),
             };
           },
         },
