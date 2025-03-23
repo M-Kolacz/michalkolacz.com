@@ -15,7 +15,7 @@ FROM base as deps
 WORKDIR /myapp
 
 ADD package.json package-lock.json .npmrc ./
-RUN npm install --include=dev
+RUN npm ci --include=dev
 
 # Setup production node_modules
 FROM base as production-deps
@@ -41,6 +41,9 @@ WORKDIR /myapp
 
 COPY --from=deps /myapp/node_modules /myapp/node_modules
 
+ADD prisma .
+RUN npx prisma generate
+
 ADD . .
 
 # Mount the secret and set it as an environment variable and run the build
@@ -49,7 +52,10 @@ RUN npm run build
 # Finally, build the production image with minimal footprint
 FROM base
 
-ENV NODE_ENV="production"
+ENV NODE_ENV = "production"
+ENV DATABASE_URL = "file:/data/sqlite.db?connection_limit=1"
+# For WAL support: https://github.com/prisma/prisma-engines/issues/4675#issuecomment-1914383246
+ENV PRISMA_SCHEMA_DISABLE_ADVISORY_LOCK = "1"
 
 WORKDIR /myapp
 
@@ -58,13 +64,13 @@ RUN INTERNAL_COMMAND_TOKEN=$(openssl rand -hex 32) && \
     echo "INTERNAL_COMMAND_TOKEN=$INTERNAL_COMMAND_TOKEN" > .env
 
 COPY --from=production-deps /myapp/node_modules /myapp/node_modules
+COPY --from=build /myapp/node_modules/.prisma /myapp/node_modules/.prisma
 
 COPY --from=build /myapp/server-build /myapp/server-build
 COPY --from=build /myapp/build /myapp/build
 COPY --from=build /myapp/package.json /myapp/package.json
-
-
+COPY --from=build /myapp/prisma /myapp/prisma
 
 ADD . .
 
-CMD ["npm","run","start"]
+CMD ["sh", "-c", "npm run migrate:deploy && npm run start"]
