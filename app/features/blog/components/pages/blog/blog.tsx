@@ -1,5 +1,7 @@
 import { useLoaderData, type MetaFunction } from "react-router";
 
+import { prisma } from "#app/utils/db.server.ts";
+
 import { ArticleCard } from "#app/features/blog/components/molecules";
 import { Post } from "#app/features/blog/types/blog.ts";
 import { getBlogPosts } from "#app/features/blog/utils/blog.server.ts";
@@ -14,6 +16,8 @@ export const meta: MetaFunction = () => {
 
 export const loader = async () => {
   const cachedPosts = blogCache.get<Omit<Post, "code">[]>("posts");
+  const countNumber = await prisma.user.count();
+  console.log({ countNumber });
 
   if (cachedPosts)
     return {
