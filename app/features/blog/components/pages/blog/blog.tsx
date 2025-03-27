@@ -17,7 +17,8 @@ export const meta: MetaFunction = () => {
 export const loader = async () => {
   const cachedPosts = blogCache.get<Omit<Post, "code">[]>("posts");
   const countNumber = await prisma.user.count();
-  console.log({ countNumber });
+  const userImageNumber = await prisma.userImage.count();
+  console.log({ countNumber, userImageNumber });
 
   if (cachedPosts)
     return {
