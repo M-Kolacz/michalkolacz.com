@@ -82,7 +82,7 @@ sqlite3 ./prisma/tmp/seed.local.db .dump > ./tmp/seed.local.sql
 fly sftp shell --app APP_NAME
 ```
 
-7. Copy local `seed.local.sql` to `/tmp` on production 
+7. Copy local `seed.local.sql` to `/tmp` on production
 
 ```bash
 put ./tmp/seed.local.sql /tmp/seed.local.sql
