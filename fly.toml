@@ -10,6 +10,7 @@ kill_timeout = 5
 
 [[vm]]
 size = 'shared-cpu-1x'
+memory = "512"
 
 [experimental]
 auto_rollback = true
