@@ -57,6 +57,9 @@ ENV DATABASE_URL = "file:/data/sqlite.db?connection_limit=1"
 # For WAL support: https://github.com/prisma/prisma-engines/issues/4675#issuecomment-1914383246
 ENV PRISMA_SCHEMA_DISABLE_ADVISORY_LOCK = "1"
 
+# add shortcut for connecting to database CLI
+RUN echo "#!/bin/sh\nset -x\nsqlite3 \$DATABASE_URL" > /usr/local/bin/database-cli && chmod +x /usr/local/bin/database-cli
+
 WORKDIR /myapp
 
 # Generate random value and save it to .env file which will be loaded by dotenv
