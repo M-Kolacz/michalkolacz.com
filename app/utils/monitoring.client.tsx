@@ -34,6 +34,7 @@ export function init() {
         createRoutesFromChildren,
         matchRoutes,
       }),
+      Sentry.captureConsoleIntegration({ levels: ["error", "warn"] }),
     ],
 
     tracesSampleRate: 1.0,
