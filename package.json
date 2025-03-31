@@ -46,6 +46,7 @@
     "@sentry/profiling-node": "^9.5.0",
     "@sentry/react": "^9.5.0",
     "address": "^2.0.3",
+    "browserslist": "^4.24.4",
     "chalk": "^5.3.0",
     "class-variance-authority": "^0.7.0",
     "close-with-grace": "^2.1.0",
@@ -130,5 +131,10 @@
     "vite": "^5.1.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.8"
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ]
 }
