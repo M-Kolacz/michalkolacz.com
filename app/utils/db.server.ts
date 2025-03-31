@@ -1,6 +1,5 @@
 import { remember } from "@epic-web/remember";
 import { PrismaClient } from "@prisma/client/index.js";
-import * as Sentry from "@sentry/node";
 
 import { styleText } from "node:util";
 
@@ -10,8 +9,8 @@ export const prisma = remember("prisma", () => {
   const client = new PrismaClient({
     log: [
       { level: "query", emit: "event" },
-      { level: "error", emit: "event" },
-      { level: "warn", emit: "event" },
+      { level: "error", emit: "stdout" },
+      { level: "warn", emit: "stdout" },
       { level: "info", emit: "stdout" },
     ],
   });
@@ -31,15 +30,6 @@ export const prisma = remember("prisma", () => {
     console.info(`prisma:query - ${dur} - ${event.query}`);
   });
 
-  client.$on("error", (event) => {
-    const prismaError = new Error(event.message);
-    Sentry.captureException(prismaError, {
-      extra: {
-        ...event,
-      },
-    });
-    console.error("🛑", "Prisma error", event.message, event.target);
-  });
   void client.$connect();
   return client;
 });
