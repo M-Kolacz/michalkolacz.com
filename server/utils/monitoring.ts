@@ -1,5 +1,8 @@
+import prismaInstrumentation from "@prisma/instrumentation";
 import * as Sentry from "@sentry/node";
 import { nodeProfilingIntegration } from "@sentry/profiling-node";
+
+const { PrismaInstrumentation } = prismaInstrumentation;
 
 export function init() {
   Sentry.init({
@@ -16,7 +19,14 @@ export function init() {
       /\/favicon.ico/,
       /\/site\.webmanifest/,
     ],
-    integrations: [Sentry.httpIntegration(), nodeProfilingIntegration()],
+    integrations: [
+      Sentry.prismaIntegration({
+        prismaInstrumentation: new PrismaInstrumentation(),
+      }),
+      Sentry.httpIntegration(),
+      nodeProfilingIntegration(),
+      Sentry.captureConsoleIntegration({ levels: ["error", "warn"] }),
+    ],
     tracesSampler(samplingContext) {
       if (samplingContext.request?.url?.includes("/resources/healthcheck")) {
         return 0;
