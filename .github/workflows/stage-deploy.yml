@@ -11,7 +11,7 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
-    if: '!contains(github.event.head_commit.author.name, "dependabot")'
+    if: github.event.head_commit.author.name != 'dependabot[bot]'
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
