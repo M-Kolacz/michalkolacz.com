@@ -11,23 +11,25 @@ export const prisma = remember("prisma", () => {
       { level: "query", emit: "event" },
       { level: "error", emit: "stdout" },
       { level: "warn", emit: "stdout" },
+      { level: "info", emit: "stdout" },
     ],
   });
-  client.$on("query", async (e) => {
-    if (e.duration < logThreshold) return;
+  client.$on("query", async (event) => {
+    if (event.duration < logThreshold) return;
     const color =
-      e.duration < logThreshold * 1.1
+      event.duration < logThreshold * 1.1
         ? "green"
-        : e.duration < logThreshold * 1.2
+        : event.duration < logThreshold * 1.2
         ? "blue"
-        : e.duration < logThreshold * 1.3
+        : event.duration < logThreshold * 1.3
         ? "yellow"
-        : e.duration < logThreshold * 1.4
+        : event.duration < logThreshold * 1.4
         ? "redBright"
         : "red";
-    const dur = styleText(color, `${e.duration}ms`);
-    console.info(`prisma:query - ${dur} - ${e.query}`);
+    const dur = styleText(color, `${event.duration}ms`);
+    console.info(`prisma:query - ${dur} - ${event.query}`);
   });
+
   void client.$connect();
   return client;
 });

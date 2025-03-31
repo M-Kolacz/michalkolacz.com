@@ -18,6 +18,7 @@ export const loader = async () => {
   const cachedPosts = blogCache.get<Omit<Post, "code">[]>("posts");
   const countNumber = await prisma.user.count();
   const userImageNumber = await prisma.userImage.count();
+  await prisma.user.findMany();
   console.log({ countNumber, userImageNumber });
 
   if (cachedPosts)
