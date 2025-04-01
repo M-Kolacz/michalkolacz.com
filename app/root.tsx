@@ -27,8 +27,10 @@ import webManifest from "./assets/favicon/site.webmanifest?url";
 import { GeneralErrorBoundary } from "./components/pages/error-boundary/error-boundary";
 import fontStylesheet from "./styles/font.css?url";
 import tailwindStylesheet from "./styles/tailwind.css?url";
+import { ClientHintCheck } from "./utils/client-hints";
 import { getEnv } from "./utils/env.server";
 import { invariantResponse } from "./utils/invariant";
+import { useNonce } from "./utils/nonce-provider";
 import { getTheme, setTheme } from "./utils/theme.server";
 
 export const meta: MetaFunction = () => [
@@ -57,6 +59,7 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
 
   return {
     ENV: getEnv(),
+    requestInfo: { hints: {} },
     theme: theme,
   };
 };
@@ -88,10 +91,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const theme = useTheme();
+  const nonce = useNonce();
 
   return (
     <html lang="en">
       <head>
+        <ClientHintCheck nonce={nonce} />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <Meta />

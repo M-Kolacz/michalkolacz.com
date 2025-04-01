@@ -17,13 +17,16 @@ import {
 import { ServerRouter } from "react-router";
 
 import { init, getEnv } from "./utils/env.server";
+import { NonceProvider } from "./utils/nonce-provider";
 
+import crypto from "node:crypto";
 import { PassThrough } from "node:stream";
 
 export const streamTimeout = 5000;
 
 init();
 global.ENV = getEnv();
+// TODO: Correct entry.server.tsx according to Epic Stack
 
 export default function handleRequest(
   request: Request,
@@ -56,10 +59,17 @@ function handleBotRequest(
   responseHeaders: Headers,
   reactRouterContext: EntryContext
 ) {
+  const nonce = crypto.randomBytes(16).toString("hex");
   return new Promise((resolve, reject) => {
     let shellRendered = false;
     const { pipe, abort } = renderToPipeableStream(
-      <ServerRouter context={reactRouterContext} url={request.url} />,
+      <NonceProvider value={nonce}>
+        <ServerRouter
+          nonce={nonce}
+          context={reactRouterContext}
+          url={request.url}
+        />
+      </NonceProvider>,
       {
         onAllReady() {
           shellRendered = true;
@@ -102,10 +112,17 @@ function handleBrowserRequest(
   responseHeaders: Headers,
   reactRouterContext: EntryContext
 ) {
+  const nonce = crypto.randomBytes(16).toString("hex");
   return new Promise((resolve, reject) => {
     let shellRendered = false;
     const { pipe, abort } = renderToPipeableStream(
-      <ServerRouter context={reactRouterContext} url={request.url} />,
+      <NonceProvider value={nonce}>
+        <ServerRouter
+          nonce={nonce}
+          context={reactRouterContext}
+          url={request.url}
+        />
+      </NonceProvider>,
       {
         onShellReady() {
           shellRendered = true;
