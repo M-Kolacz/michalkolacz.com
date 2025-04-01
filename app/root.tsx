@@ -61,8 +61,6 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
   };
 };
 
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const ThemeFormSchema = z.object({
   theme: z.enum(["light", "dark"]),
   // // this is useful for progressive enhancement
