@@ -1,4 +1,10 @@
-import { type LinksFunction, type MetaFunction } from "react-router";
+import {
+  type LinksFunction,
+  type MetaFunction,
+  type ActionFunctionArgs,
+  type LoaderFunctionArgs,
+  useFetcher,
+} from "react-router";
 import {
   Links,
   Meta,
@@ -19,6 +25,7 @@ import { GeneralErrorBoundary } from "./components/pages/error-boundary/error-bo
 import fontStylesheet from "./styles/font.css?url";
 import tailwindStylesheet from "./styles/tailwind.css?url";
 import { getEnv } from "./utils/env.server";
+import { getTheme, setTheme } from "./utils/theme.server";
 
 export const meta: MetaFunction = () => [
   { name: "apple-mobile-web-app-title", content: "michalkolacz.com" },
@@ -41,13 +48,32 @@ export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tailwindStylesheet },
 ];
 
-export const loader = () => {
+export const loader = ({ request }: LoaderFunctionArgs) => {
+  const theme = getTheme(request);
+
   return {
     ENV: getEnv(),
+    theme: theme,
   };
 };
 
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const themeCookie = await setTheme(request);
+
+  await wait(5000);
+
+  return new Response("Ok", {
+    headers: {
+      "set-cookie": themeCookie,
+    },
+  });
+};
+
 export function Layout({ children }: { children: React.ReactNode }) {
+  const theme = useTheme();
+
   return (
     <html lang="en">
       <head>
@@ -56,8 +82,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="flex flex-col min-h-screen">
-        <Header />
+      <body
+        className={`flex flex-col min-h-screen ${
+          theme === "dark" ? "dark" : ""
+        }`}
+      >
+        <Header theme={theme} />
         <main className="flex-grow container mx-auto px-4 py-8">
           {children}
         </main>
@@ -71,6 +101,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const { ENV } = useLoaderData<typeof loader>();
+
   return (
     <>
       <Outlet />
@@ -82,5 +113,18 @@ export default function App() {
     </>
   );
 }
+
+const useTheme = () => {
+  const { theme } = useLoaderData<typeof loader>();
+  const fetcher = useFetcher({ key: "theme" });
+  const fetcherTheme = fetcher.formData?.get("theme") as
+    | undefined
+    | "light"
+    | "dark";
+
+  if (!fetcherTheme) return theme;
+
+  return fetcherTheme;
+};
 
 export const ErrorBoundary = () => <GeneralErrorBoundary />;

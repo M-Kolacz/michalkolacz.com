@@ -1,6 +1,8 @@
-import { Link } from "react-router";
+import { Link, useFetcher } from "react-router";
 
-export const Header = () => {
+export const Header = ({ theme }: { theme: "light" | "dark" }) => {
+  const fetcher = useFetcher({ key: "theme" });
+
   return (
     <header className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-soft transition-colors duration-300">
       <div className="container mx-auto px-4 py-6 flex justify-between items-center">
@@ -23,8 +25,23 @@ export const Header = () => {
               </li>
             </ul>
           </nav>
+          <fetcher.Form method="POST">
+            <input
+              type="hidden"
+              name="theme"
+              value={theme === "light" ? "dark" : "light"}
+            />
+
+            <button type="submit">{themeMap[theme]}</button>
+          </fetcher.Form>
         </div>
       </div>
     </header>
   );
+};
+
+const themeMap = {
+  light: "🌚",
+  dark: "🌞",
+  system: "🖥️",
 };
