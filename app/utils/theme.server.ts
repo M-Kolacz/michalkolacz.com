@@ -1,30 +1,23 @@
 import * as cookie from "cookie";
-import { z } from "zod";
 
 const cookieHeaderName = "theme";
-const defaultTheme = "light";
-const themeSchema = z.enum(["light", "dark"]);
+export type Theme = "light" | "dark";
+const defaultTheme: Theme = "light";
 
-export const getTheme = (request: Request) => {
+export const getTheme = (request: Request): Theme => {
   const cookieHeader = request.headers.get("cookie");
-  if (!cookieHeader) return defaultTheme;
+  const parsed = cookieHeader
+    ? cookie.parse(cookieHeader)[cookieHeaderName]
+    : "light";
 
-  const theme = cookie.parse(cookieHeader)[cookieHeaderName];
+  if (parsed === "light" || parsed === "dark") return parsed;
 
-  const { data = defaultTheme } = themeSchema.safeParse(theme);
-
-  return data;
+  return defaultTheme;
 };
 
-export const setTheme = async (request: Request) => {
-  const formData = await request.formData();
-  const nextTheme = formData.get("theme");
-
-  const { data: theme = defaultTheme } = themeSchema.safeParse(nextTheme);
-
-  const nextThemeCookie = cookie.serialize(cookieHeaderName, theme, {
+export const setTheme = (theme: Theme) => {
+  return cookie.serialize(cookieHeaderName, theme, {
     path: "/",
+    maxAge: 31536000,
   });
-
-  return nextThemeCookie;
 };

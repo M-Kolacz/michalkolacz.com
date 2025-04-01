@@ -1,9 +1,11 @@
+import { parseWithZod } from "@conform-to/zod";
 import {
   type LinksFunction,
   type MetaFunction,
   type ActionFunctionArgs,
   type LoaderFunctionArgs,
   useFetcher,
+  data,
 } from "react-router";
 import {
   Links,
@@ -13,6 +15,7 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "react-router";
+import { z } from "zod";
 
 import { Header, Footer } from "#app/components/organisms";
 
@@ -25,6 +28,7 @@ import { GeneralErrorBoundary } from "./components/pages/error-boundary/error-bo
 import fontStylesheet from "./styles/font.css?url";
 import tailwindStylesheet from "./styles/tailwind.css?url";
 import { getEnv } from "./utils/env.server";
+import { invariantResponse } from "./utils/invariant";
 import { getTheme, setTheme } from "./utils/theme.server";
 
 export const meta: MetaFunction = () => [
@@ -59,16 +63,29 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const ThemeFormSchema = z.object({
+  theme: z.enum(["light", "dark"]),
+  // // this is useful for progressive enhancement
+  // redirectTo: z.string().optional(),
+});
+
 export const action = async ({ request }: ActionFunctionArgs) => {
-  const themeCookie = await setTheme(request);
-
-  await wait(5000);
-
-  return new Response("Ok", {
-    headers: {
-      "set-cookie": themeCookie,
-    },
+  const formData = await request.formData();
+  const submission = parseWithZod(formData, {
+    schema: ThemeFormSchema,
   });
+
+  invariantResponse(submission.status === "success", "Invalid theme received");
+
+  const { theme } = submission.value;
+
+  const responseInit = {
+    headers: {
+      "set-cookie": setTheme(theme),
+    },
+  };
+
+  return data({ result: submission.reply() }, responseInit);
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
@@ -114,17 +131,27 @@ export default function App() {
   );
 }
 
+const useOptimisticThemeMode = () => {
+  const fetcher = useFetcher({ key: "theme" });
+
+  if (fetcher && fetcher.formData) {
+    const submission = parseWithZod(fetcher.formData, {
+      schema: ThemeFormSchema,
+    });
+
+    if (submission.status === "success") {
+      return submission.value.theme;
+    }
+  }
+};
+
 const useTheme = () => {
   const { theme } = useLoaderData<typeof loader>();
-  const fetcher = useFetcher({ key: "theme" });
-  const fetcherTheme = fetcher.formData?.get("theme") as
-    | undefined
-    | "light"
-    | "dark";
+  const optimisticMode = useOptimisticThemeMode();
 
-  if (!fetcherTheme) return theme;
+  if (optimisticMode) return optimisticMode;
 
-  return fetcherTheme;
+  return theme;
 };
 
 export const ErrorBoundary = () => <GeneralErrorBoundary />;
