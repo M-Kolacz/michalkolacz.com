@@ -153,3 +153,7 @@ const useTheme = () => {
 };
 
 export const ErrorBoundary = () => <GeneralErrorBoundary />;
+
+//TODO: User hints
+//TODO: System preference
+//TODO: Request info
