@@ -4,20 +4,21 @@
  * For more information, see https://remix.run/file-conventions/entry.server
  */
 
+import { contentSecurity } from "@nichtsam/helmet/content";
 import { createReadableStreamFromReadable } from "@react-router/node";
 import * as Sentry from "@sentry/node";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import {
   ActionFunctionArgs,
+  HandleDocumentRequestFunction,
   LoaderFunctionArgs,
-  type AppLoadContext,
-  type EntryContext,
 } from "react-router";
 import { ServerRouter } from "react-router";
 
 import { init, getEnv } from "./utils/env.server";
 import { NonceProvider } from "./utils/nonce-provider";
+import { makeTimings } from "./utils/timing.server";
 
 import crypto from "node:crypto";
 import { PassThrough } from "node:stream";
@@ -26,42 +27,30 @@ export const streamTimeout = 5000;
 
 init();
 global.ENV = getEnv();
-// TODO: Correct entry.server.tsx according to Epic Stack
 
-export default function handleRequest(
-  request: Request,
-  responseStatusCode: number,
-  responseHeaders: Headers,
-  reactRouterContext: EntryContext,
-  // This is ignored so we can keep it in the template for visibility.  Feel
-  // free to delete this parameter in your app if you're not using it!
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  loadContext: AppLoadContext
-) {
-  return isbot(request.headers.get("user-agent") || "")
-    ? handleBotRequest(
-        request,
-        responseStatusCode,
-        responseHeaders,
-        reactRouterContext
-      )
-    : handleBrowserRequest(
-        request,
-        responseStatusCode,
-        responseHeaders,
-        reactRouterContext
-      );
-}
+const MODE = process.env.NODE_ENV ?? "development";
 
-function handleBotRequest(
-  request: Request,
-  responseStatusCode: number,
-  responseHeaders: Headers,
-  reactRouterContext: EntryContext
-) {
+type DocRequestArgs = Parameters<HandleDocumentRequestFunction>;
+
+export default function handleRequest(...args: DocRequestArgs) {
+  const [request, responseStatusCode, responseHeaders, reactRouterContext] =
+    args;
+
+  if (process.env.NODE_ENV === "production" && process.env.SENTRY_DSN) {
+    responseHeaders.append("Document-Policy", "js-profiling");
+  }
+
+  const callbackName = isbot(request.headers.get("user-agent"))
+    ? "onAllReady"
+    : "onShellReady";
+
   const nonce = crypto.randomBytes(16).toString("hex");
-  return new Promise((resolve, reject) => {
-    let shellRendered = false;
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise(async (resolve, reject) => {
+    let didError = false;
+
+    const timings = makeTimings("render", "renderToPipeableStream");
+
     const { pipe, abort } = renderToPipeableStream(
       <NonceProvider value={nonce}>
         <ServerRouter
@@ -71,91 +60,56 @@ function handleBotRequest(
         />
       </NonceProvider>,
       {
-        onAllReady() {
-          shellRendered = true;
+        [callbackName]: () => {
           const body = new PassThrough();
-          const stream = createReadableStreamFromReadable(body);
-
           responseHeaders.set("Content-Type", "text/html");
+          responseHeaders.append("Server-Timing", timings.toString());
+          console.log({ nonce, MODE }, "FROM ENTRY.SERVER");
+          contentSecurity(responseHeaders, {
+            crossOriginEmbedderPolicy: false,
+            contentSecurityPolicy: {
+              // NOTE: Remove reportOnly when you're ready to enforce this CSP
+              reportOnly: true,
+              directives: {
+                fetch: {
+                  "connect-src": [
+                    MODE === "development" ? "ws:" : undefined,
+                    process.env.SENTRY_DSN ? "*.sentry.io" : undefined,
+                    "'self'",
+                  ],
+                  "font-src": ["'self'"],
+                  "frame-src": ["'self'"],
+                  "img-src": ["'self'", "data:"],
+                  "script-src": [
+                    "'strict-dynamic'",
+                    "'self'",
+                    `'nonce-${nonce}'`,
+                  ],
+                  "script-src-attr": [`'nonce-${nonce}'`],
+                },
+              },
+            },
+          });
 
           resolve(
-            new Response(stream, {
+            new Response(createReadableStreamFromReadable(body), {
               headers: responseHeaders,
-              status: responseStatusCode,
+              status: didError ? 500 : responseStatusCode,
             })
           );
-
           pipe(body);
         },
-        onShellError(error: unknown) {
+        onShellError: (error: unknown) => {
           reject(error);
         },
-        onError(error: unknown) {
-          responseStatusCode = 500;
-          // Log streaming rendering errors from inside the shell.  Don't log
-          // errors encountered during initial shell rendering since they'll
-          // reject and get logged in handleDocumentRequest.
-          if (shellRendered) {
-            console.error("🛑", error);
-          }
+        onError: () => {
+          didError = true;
         },
+        nonce,
       }
     );
 
-    setTimeout(abort, streamTimeout);
-  });
-}
-
-function handleBrowserRequest(
-  request: Request,
-  responseStatusCode: number,
-  responseHeaders: Headers,
-  reactRouterContext: EntryContext
-) {
-  const nonce = crypto.randomBytes(16).toString("hex");
-  return new Promise((resolve, reject) => {
-    let shellRendered = false;
-    const { pipe, abort } = renderToPipeableStream(
-      <NonceProvider value={nonce}>
-        <ServerRouter
-          nonce={nonce}
-          context={reactRouterContext}
-          url={request.url}
-        />
-      </NonceProvider>,
-      {
-        onShellReady() {
-          shellRendered = true;
-          const body = new PassThrough();
-          const stream = createReadableStreamFromReadable(body);
-
-          responseHeaders.set("Content-Type", "text/html");
-
-          resolve(
-            new Response(stream, {
-              headers: responseHeaders,
-              status: responseStatusCode,
-            })
-          );
-
-          pipe(body);
-        },
-        onShellError(error: unknown) {
-          reject(error);
-        },
-        onError(error: unknown) {
-          responseStatusCode = 500;
-          // Log streaming rendering errors from inside the shell.  Don't log
-          // errors encountered during initial shell rendering since they'll
-          // reject and get logged in handleDocumentRequest.
-          if (shellRendered) {
-            console.error("🛑", error);
-          }
-        },
-      }
-    );
-
-    setTimeout(abort, streamTimeout);
+    setTimeout(abort, streamTimeout + 5000);
   });
 }
 
@@ -167,9 +121,9 @@ export function handleError(
 
   if (error instanceof Error) {
     console.error("🛑", String(error.stack));
-    void Sentry.captureException(error);
   } else {
     console.error("🛑", error);
-    Sentry.captureException(error);
   }
+
+  Sentry.captureException(error);
 }

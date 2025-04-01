@@ -27,7 +27,7 @@ import webManifest from "./assets/favicon/site.webmanifest?url";
 import { GeneralErrorBoundary } from "./components/pages/error-boundary/error-boundary";
 import fontStylesheet from "./styles/font.css?url";
 import tailwindStylesheet from "./styles/tailwind.css?url";
-import { ClientHintCheck } from "./utils/client-hints";
+import { ClientHintCheck, getHints } from "./utils/client-hints";
 import { getEnv } from "./utils/env.server";
 import { invariantResponse } from "./utils/invariant";
 import { useNonce } from "./utils/nonce-provider";
@@ -59,7 +59,7 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
 
   return {
     ENV: getEnv(),
-    requestInfo: { hints: {} },
+    requestInfo: { hints: getHints(request) },
     theme: theme,
   };
 };
@@ -120,8 +120,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const { ENV } = useLoaderData<typeof loader>();
-
+  const { ENV, requestInfo } = useLoaderData<typeof loader>();
+  console.log({ requestInfo });
   return (
     <>
       <Outlet />
