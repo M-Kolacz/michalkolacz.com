@@ -1,4 +1,4 @@
-name: Stage deployment
+name: 🚀 Stage deployment
 on:
   push:
     branches:

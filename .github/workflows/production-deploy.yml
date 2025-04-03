@@ -1,4 +1,4 @@
-name: Deploy application to production
+name: 🚀 Production deployment
 on:
   workflow_dispatch: {}
   push:
