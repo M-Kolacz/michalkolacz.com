@@ -48,12 +48,18 @@ export const loader = () => {
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const { ENV } = useLoaderData<typeof loader>();
+
+  const allowIndexing = ENV.ALLOW_INDEXING === "true";
   return (
     <html lang="en">
       <head>
+        <Meta />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Meta />
+        {allowIndexing ? null : (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
         <Links />
       </head>
       <body className="flex flex-col min-h-screen">
