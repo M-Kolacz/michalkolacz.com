@@ -15,7 +15,7 @@
     "build:remix": "react-router build",
     "build:icons": "tsx ./other/build-icons.ts",
     "build:server": "tsx ./other/build-server.ts",
-    "dev": "node ./server/dev-server.js",
+    "dev": "cross-env NODE_ENV=development MOCKS=true node ./server/dev-server.js",
     "start": "cross-env NODE_ENV=production node .",
     "lint": "eslint .",
     "typecheck": "react-router typegen && tsc",

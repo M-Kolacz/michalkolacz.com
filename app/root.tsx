@@ -112,20 +112,24 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {children}
         </main>
         <Footer />
-        <ScrollRestoration getKey={(location) => location.pathname} />
-        <Scripts />
+        <ScrollRestoration
+          getKey={(location) => location.pathname}
+          nonce={nonce}
+        />
+        <Scripts nonce={nonce} />
       </body>
     </html>
   );
 }
 
 export default function App() {
-  const { ENV, requestInfo } = useLoaderData<typeof loader>();
-  console.log({ requestInfo });
+  const { ENV } = useLoaderData<typeof loader>();
+  const nonce = useNonce();
   return (
     <>
       <Outlet />
       <script
+        nonce={nonce}
         dangerouslySetInnerHTML={{
           __html: `window.ENV=${JSON.stringify(ENV)}`,
         }}

@@ -1,27 +1,22 @@
-/**
- * By default, Remix will handle generating the HTTP Response for you.
- * You are free to delete this file if you'd like to, but if you ever want it revealed again, you can run `npx remix reveal` ✨
- * For more information, see https://remix.run/file-conventions/entry.server
- */
-
 import { contentSecurity } from "@nichtsam/helmet/content";
 import { createReadableStreamFromReadable } from "@react-router/node";
 import * as Sentry from "@sentry/node";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
 import {
-  ActionFunctionArgs,
-  HandleDocumentRequestFunction,
-  LoaderFunctionArgs,
+  ServerRouter,
+  type LoaderFunctionArgs,
+  type ActionFunctionArgs,
+  type HandleDocumentRequestFunction,
 } from "react-router";
-import { ServerRouter } from "react-router";
 
-import { init, getEnv } from "./utils/env.server";
-import { NonceProvider } from "./utils/nonce-provider";
-import { makeTimings } from "./utils/timing.server";
+import { getEnv, init } from "./utils/env.server.ts";
+import { NonceProvider } from "./utils/nonce-provider.ts";
+import { makeTimings } from "./utils/timing.server.ts";
 
 import crypto from "node:crypto";
 import { PassThrough } from "node:stream";
+import { styleText } from "node:util";
 
 export const streamTimeout = 5000;
 
@@ -32,7 +27,7 @@ const MODE = process.env.NODE_ENV ?? "development";
 
 type DocRequestArgs = Parameters<HandleDocumentRequestFunction>;
 
-export default function handleRequest(...args: DocRequestArgs) {
+export default async function handleRequest(...args: DocRequestArgs) {
   const [request, responseStatusCode, responseHeaders, reactRouterContext] =
     args;
 
@@ -48,7 +43,8 @@ export default function handleRequest(...args: DocRequestArgs) {
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve, reject) => {
     let didError = false;
-
+    // NOTE: this timing will only include things that are rendered in the shell
+    // and will not include suspended components and deferred loaders
     const timings = makeTimings("render", "renderToPipeableStream");
 
     const { pipe, abort } = renderToPipeableStream(
@@ -64,7 +60,7 @@ export default function handleRequest(...args: DocRequestArgs) {
           const body = new PassThrough();
           responseHeaders.set("Content-Type", "text/html");
           responseHeaders.append("Server-Timing", timings.toString());
-          console.log({ nonce, MODE }, "FROM ENTRY.SERVER");
+
           contentSecurity(responseHeaders, {
             crossOriginEmbedderPolicy: false,
             contentSecurityPolicy: {
@@ -117,12 +113,16 @@ export function handleError(
   error: unknown,
   { request }: LoaderFunctionArgs | ActionFunctionArgs
 ): void {
-  if (request.signal.aborted) return;
+  // Skip capturing if the request is aborted as Remix docs suggest
+  // Ref: https://remix.run/docs/en/main/file-conventions/entry.server#handleerror
+  if (request.signal.aborted) {
+    return;
+  }
 
   if (error instanceof Error) {
-    console.error("🛑", String(error.stack));
+    console.error(styleText("red", String(error.stack)));
   } else {
-    console.error("🛑", error);
+    console.error(error);
   }
 
   Sentry.captureException(error);
