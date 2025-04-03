@@ -12,10 +12,9 @@
   },
   "scripts": {
     "build": "run-s build:*",
-    "build:remix": "react-router build",
+    "build:react-router": "react-router build",
     "build:icons": "tsx ./other/build-icons.ts",
     "build:server": "tsx ./other/build-server.ts",
-    "predev": "prisma generate",
     "dev": "node ./server/dev-server.js",
     "start": "cross-env NODE_ENV=production node .",
     "lint": "eslint .",
@@ -126,7 +125,7 @@
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.13.0",
-    "vite": "^5.1.0",
+    "vite": "^6.2.5",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.8"
   },
