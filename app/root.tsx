@@ -12,15 +12,15 @@ import {
   useLoaderData,
 } from "react-router";
 
-import { Header, Footer } from "#app/components/organisms";
-
 import faviconAppleTouchIcon from "./assets/favicon/apple-touch-icon.png?url";
 import faviconPng from "./assets/favicon/favicon-96x96.png?url";
 import faviconIco from "./assets/favicon/favicon.ico?url";
 import faviconSvg from "./assets/favicon/favicon.svg?url";
 import webManifest from "./assets/favicon/site.webmanifest?url";
-import { GeneralErrorBoundary } from "./components/pages/error-boundary/error-boundary";
-import { useOptionalTheme } from "./components/pages/theme-switch/theme-switch";
+import { Header, Footer } from "./components/organisms";
+import { GeneralErrorBoundary } from "./components/pages/error-boundary";
+// eslint-disable-next-line boundaries/element-types
+import { useOptionalTheme } from "./routes/resources+/theme-switch";
 import fontStylesheet from "./styles/font.css?url";
 import tailwindStylesheet from "./styles/tailwind.css?url";
 import { ClientHintCheck, getHints } from "./utils/client-hints";

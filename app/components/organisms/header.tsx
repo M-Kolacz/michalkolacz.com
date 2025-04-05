@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 
-import { ThemeSwitcher } from "#app/components/pages/theme-switch/theme-switch.tsx";
+// eslint-disable-next-line boundaries/element-types
+import { ThemeSwitcher } from "#app/routes/resources+/theme-switch.tsx";
 
 export const Header = () => {
   return (
