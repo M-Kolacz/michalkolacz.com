@@ -27,10 +27,16 @@ import webManifest from "./assets/favicon/site.webmanifest?url";
 import { GeneralErrorBoundary } from "./components/pages/error-boundary/error-boundary";
 import fontStylesheet from "./styles/font.css?url";
 import tailwindStylesheet from "./styles/tailwind.css?url";
-import { ClientHintCheck, getHints } from "./utils/client-hints";
+import {
+  ClientHintCheck,
+  getHints,
+  useHints,
+  useOptionalHints,
+} from "./utils/client-hints";
 import { getEnv } from "./utils/env.server";
 import { invariantResponse } from "./utils/invariant";
 import { useNonce } from "./utils/nonce-provider";
+import { useOptionalRequestInfo, useRequestInfo } from "./utils/request-info";
 import { getTheme, setTheme } from "./utils/theme.server";
 
 export const meta: MetaFunction = () => [
@@ -55,17 +61,19 @@ export const links: LinksFunction = () => [
 ];
 
 export const loader = ({ request }: LoaderFunctionArgs) => {
-  const theme = getTheme(request);
-
   return {
     ENV: getEnv(),
-    requestInfo: { hints: getHints(request) },
-    theme: theme,
+    requestInfo: {
+      hints: getHints(request),
+      userPrefs: {
+        theme: getTheme(request),
+      },
+    },
   };
 };
 
 const ThemeFormSchema = z.object({
-  theme: z.enum(["light", "dark"]),
+  theme: z.enum(["system", "light", "dark"]),
   // // this is useful for progressive enhancement
   // redirectTo: z.string().optional(),
 });
@@ -90,11 +98,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
-  const theme = useTheme();
+  const data = useLoaderData<typeof loader>();
+  const theme = useOptionalTheme() || "light";
   const nonce = useNonce();
 
   return (
-    <html lang="en">
+    <html lang="en" className={`${theme} h-full overflow-x-hidden`}>
       <head>
         <ClientHintCheck nonce={nonce} />
         <meta charSet="utf-8" />
@@ -102,12 +111,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body
-        className={`flex flex-col min-h-screen ${
-          theme === "dark" ? "dark" : ""
-        }`}
-      >
-        <Header theme={theme} />
+      <body className={`flex flex-col min-h-screen`}>
+        <Header userPreference={data.requestInfo.userPrefs.theme} />
         <main className="flex-grow container mx-auto px-4 py-8">
           {children}
         </main>
@@ -125,6 +130,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   const { ENV } = useLoaderData<typeof loader>();
   const nonce = useNonce();
+
   return (
     <>
       <Outlet />
@@ -138,7 +144,7 @@ export default function App() {
   );
 }
 
-const useOptimisticThemeMode = () => {
+export const useOptimisticThemeMode = () => {
   const fetcher = useFetcher({ key: "theme" });
 
   if (fetcher && fetcher.formData) {
@@ -152,17 +158,26 @@ const useOptimisticThemeMode = () => {
   }
 };
 
-const useTheme = () => {
-  const { theme } = useLoaderData<typeof loader>();
+export const useTheme = () => {
+  const hints = useHints();
+  const requestInfo = useRequestInfo();
   const optimisticMode = useOptimisticThemeMode();
 
-  if (optimisticMode) return optimisticMode;
+  if (optimisticMode)
+    return optimisticMode === "system" ? hints.theme : optimisticMode;
 
-  return theme;
+  return requestInfo.userPrefs.theme ?? hints.theme;
+};
+
+export const useOptionalTheme = () => {
+  const optionalHitns = useOptionalHints();
+  const optionalRequestInfo = useOptionalRequestInfo();
+  const optimisticMode = useOptimisticThemeMode();
+  if (optimisticMode) {
+    return optimisticMode === "system" ? optionalHitns?.theme : optimisticMode;
+  }
+
+  return optionalRequestInfo?.userPrefs.theme ?? optionalHitns?.theme;
 };
 
 export const ErrorBoundary = () => <GeneralErrorBoundary />;
-
-//TODO: User hints
-//TODO: System preference
-//TODO: Request info
