@@ -1,3 +1,4 @@
+import { helmet } from "@nichtsam/helmet/node-http";
 import { createRequestHandler } from "@react-router/express";
 import { ip as ipAddress } from "address";
 import chalk from "chalk";
@@ -6,7 +7,6 @@ import compression from "compression";
 import express from "express";
 import { rateLimit } from "express-rate-limit";
 import getPort, { portNumbers } from "get-port";
-import helmet from "helmet";
 import morgan from "morgan";
 import { type ServerBuild } from "react-router";
 
@@ -68,6 +68,12 @@ app.use(compression());
 // http://expressjs.com/en/advanced/best-practice-security.html#at-a-minimum-disable-x-powered-by-header
 app.disable("x-powered-by");
 
+app.use((_, res, next) => {
+  // The referrerPolicy breaks our redirectTo logic
+  helmet(res, { general: { referrerPolicy: false } });
+  next();
+});
+
 if (viteDevServer) {
   app.use(viteDevServer.middlewares);
 } else {
@@ -103,35 +109,6 @@ app.use((_req, res, next) => {
   res.locals.cpsNonce = crypto.randomBytes(16).toString("hex");
   next();
 });
-
-app.use(
-  helmet({
-    xPoweredBy: false,
-    referrerPolicy: { policy: "same-origin" },
-    crossOriginEmbedderPolicy: false,
-    contentSecurityPolicy: {
-      // NOTE: Remove reportOnly when you're ready to enforce this CSP
-      reportOnly: true,
-      directives: {
-        "connect-src": [IS_DEV ? "ws:" : null, "'self'"].filter(Boolean),
-        "font-src": ["'self'"],
-        "frame-src": ["'self'"],
-        "img-src": ["'self'", "data:"],
-        "script-src": [
-          "'strict-dynamic'",
-          "'self'",
-          // @ts-expect-error - nonce is not in the CSP type
-          (_, res) => `'nonce-${res.locals.cspNonce}'`,
-        ],
-        "script-src-attr": [
-          // @ts-expect-error - nonce is not in the CSP type
-          (_, res) => `'nonce-${res.locals.cspNonce}'`,
-        ],
-        "upgrade-insecure-requests": null,
-      },
-    },
-  })
-);
 
 // When running tests or running in development, we want to effectively disable
 // rate limiting because playwright tests are very fast and we don't want to

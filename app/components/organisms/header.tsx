@@ -1,5 +1,7 @@
 import { Link } from "react-router";
 
+import { ThemeSwitcher } from "#app/components/pages/theme-switch/theme-switch.tsx";
+
 export const Header = () => {
   return (
     <header className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-soft transition-colors duration-300">
@@ -23,6 +25,7 @@ export const Header = () => {
               </li>
             </ul>
           </nav>
+          <ThemeSwitcher />
         </div>
       </div>
     </header>

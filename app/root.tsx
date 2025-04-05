@@ -1,4 +1,8 @@
-import { type LinksFunction, type MetaFunction } from "react-router";
+import {
+  type LinksFunction,
+  type MetaFunction,
+  type LoaderFunctionArgs,
+} from "react-router";
 import {
   Links,
   Meta,
@@ -16,9 +20,13 @@ import faviconIco from "./assets/favicon/favicon.ico?url";
 import faviconSvg from "./assets/favicon/favicon.svg?url";
 import webManifest from "./assets/favicon/site.webmanifest?url";
 import { GeneralErrorBoundary } from "./components/pages/error-boundary/error-boundary";
+import { useOptionalTheme } from "./components/pages/theme-switch/theme-switch";
 import fontStylesheet from "./styles/font.css?url";
 import tailwindStylesheet from "./styles/tailwind.css?url";
+import { ClientHintCheck, getHints } from "./utils/client-hints";
 import { getEnv } from "./utils/env.server";
+import { useNonce } from "./utils/nonce-provider";
+import { getTheme } from "./utils/theme.server";
 
 export const meta: MetaFunction = () => [
   { name: "apple-mobile-web-app-title", content: "michalkolacz.com" },
@@ -41,19 +49,29 @@ export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tailwindStylesheet },
 ];
 
-export const loader = () => {
+export const loader = ({ request }: LoaderFunctionArgs) => {
   return {
     ENV: getEnv(),
+    requestInfo: {
+      hints: getHints(request),
+      userPrefs: {
+        theme: getTheme(request),
+      },
+    },
   };
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
+  const theme = useOptionalTheme() || "light";
+  const nonce = useNonce();
+
   const { ENV } = useLoaderData<typeof loader>();
 
   const allowIndexing = ENV.ALLOW_INDEXING === "true";
   return (
-    <html lang="en">
+    <html lang="en" className={`${theme} h-full overflow-x-hidden`}>
       <head>
+        <ClientHintCheck nonce={nonce} />
         <Meta />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -62,14 +80,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
         )}
         <Links />
       </head>
-      <body className="flex flex-col min-h-screen">
+      <body className={`flex flex-col min-h-screen`}>
         <Header />
         <main className="flex-grow container mx-auto px-4 py-8">
           {children}
         </main>
         <Footer />
-        <ScrollRestoration getKey={(location) => location.pathname} />
-        <Scripts />
+        <ScrollRestoration
+          getKey={(location) => location.pathname}
+          nonce={nonce}
+        />
+        <Scripts nonce={nonce} />
       </body>
     </html>
   );
@@ -77,10 +98,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   const { ENV } = useLoaderData<typeof loader>();
+  const nonce = useNonce();
+
   return (
     <>
       <Outlet />
       <script
+        nonce={nonce}
         dangerouslySetInnerHTML={{
           __html: `window.ENV=${JSON.stringify(ENV)}`,
         }}
