@@ -65,13 +65,19 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const theme = useOptionalTheme() || "light";
   const nonce = useNonce();
 
+  const { ENV } = useLoaderData<typeof loader>();
+
+  const allowIndexing = ENV.ALLOW_INDEXING === "true";
   return (
     <html lang="en" className={`${theme} h-full overflow-x-hidden`}>
       <head>
         <ClientHintCheck nonce={nonce} />
+        <Meta />
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Meta />
+        {allowIndexing ? null : (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
         <Links />
       </head>
       <body className={`flex flex-col min-h-screen`}>

@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build": "run-s build:*",
-    "build:remix": "react-router build",
+    "build:react-router": "react-router build",
     "build:icons": "tsx ./other/build-icons.ts",
     "build:server": "tsx ./other/build-server.ts",
     "dev": "cross-env NODE_ENV=development MOCKS=true node ./server/dev-server.js",
@@ -21,7 +21,6 @@
     "typecheck": "react-router typegen && tsc",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "migrate:deploy": "prisma migrate deploy"
@@ -124,7 +123,6 @@
     "fs-extra": "^11.2.0",
     "glob": "^11.0.0",
     "globals": "^15.12.0",
-    "husky": "^9.1.7",
     "node-html-parser": "^7.0.1",
     "npm-run-all": "^4.1.5",
     "playwright": "^1.51.0",
@@ -135,7 +133,7 @@
     "tsx": "^4.19.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.13.0",
-    "vite": "^5.1.0",
+    "vite": "^6.2.5",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.0.8"
   },

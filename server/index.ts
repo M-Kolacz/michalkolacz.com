@@ -15,7 +15,7 @@ import crypto from "node:crypto";
 const MODE = process.env.NODE_ENV ?? "development";
 const IS_PROD = MODE === "production";
 const IS_DEV = MODE === "development";
-const ALLOW_INDEXING = process.env.ALLOW_INDEXING !== "false";
+const ALLOW_INDEXING = process.env.ALLOW_INDEXING === "true";
 const SENTRY_ENABLED = IS_PROD && process.env.SENTRY_DSN;
 
 if (SENTRY_ENABLED) {

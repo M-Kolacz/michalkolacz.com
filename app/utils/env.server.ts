@@ -7,6 +7,7 @@ const schema = z.object({
   SENTRY_ORG: z.string(),
   SENTRY_PROJECT: z.string(),
   SENTRY_DSN: z.string(),
+  ALLOW_INDEXING: z.enum(["true", "false"]).default("false"),
 });
 
 declare global {
@@ -33,6 +34,7 @@ export const init = () => {
 export const getEnv = () => ({
   MODE: process.env.NODE_ENV,
   SENTRY_DSN: process.env.SENTRY_DSN,
+  ALLOW_INDEXING: process.env.ALLOW_INDEXING,
 });
 
 type ENV = ReturnType<typeof getEnv>;
