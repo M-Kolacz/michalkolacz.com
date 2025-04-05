@@ -19,7 +19,6 @@ import faviconSvg from "./assets/favicon/favicon.svg?url";
 import webManifest from "./assets/favicon/site.webmanifest?url";
 import { Header, Footer } from "./components/organisms";
 import { GeneralErrorBoundary } from "./components/pages/error-boundary";
-// eslint-disable-next-line boundaries/element-types
 import { useOptionalTheme } from "./routes/resources+/theme-switch";
 import fontStylesheet from "./styles/font.css?url";
 import tailwindStylesheet from "./styles/tailwind.css?url";

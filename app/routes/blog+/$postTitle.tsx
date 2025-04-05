@@ -6,7 +6,6 @@ import { type MetaFunction } from "react-router";
 
 import { Button } from "#app/components/atoms";
 import { GeneralErrorBoundary } from "#app/components/pages/error-boundary.tsx";
-// eslint-disable-next-line boundaries/element-types
 import { Post } from "#app/types/blog.ts";
 import { getBlogPost } from "#app/utils/blog.server.ts";
 import { blogCache } from "#app/utils/cache.server.ts";

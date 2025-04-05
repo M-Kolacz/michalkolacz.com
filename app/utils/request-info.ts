@@ -1,6 +1,5 @@
 import { useRouteLoaderData } from "react-router";
 
-// eslint-disable-next-line boundaries/element-types
 import { type loader as rootLoader } from "#app/root.tsx";
 
 import { invariantResponse } from "./invariant";
