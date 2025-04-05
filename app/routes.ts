@@ -13,5 +13,9 @@ export default [
     "/resources/healthcheck",
     "./components/pages/healthcheck/healthcheck.tsx"
   ),
+  route(
+    "/resources/theme-switch",
+    "./components/pages/theme-switch/theme-switch.tsx"
+  ),
   route("*", "./components/pages/not-found/not-found.tsx"),
 ] satisfies RouteConfig;

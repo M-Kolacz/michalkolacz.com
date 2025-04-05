@@ -1,27 +1,8 @@
-import { useForm, getFormProps } from "@conform-to/react";
-import { Link, useFetcher } from "react-router";
+import { Link } from "react-router";
 
-// eslint-disable-next-line boundaries/element-types
-import { action, useOptimisticThemeMode } from "#app/root";
-import { type Theme } from "#app/utils/theme.server.ts";
+import { ThemeSwitcher } from "#app/components/pages/theme-switch/theme-switch.tsx";
 
-export const Header = ({
-  userPreference,
-}: {
-  userPreference: Theme | null;
-}) => {
-  const fetcher = useFetcher<typeof action>({ key: "theme" });
-
-  const [form] = useForm({
-    id: "theme-switch",
-    lastResult: fetcher.data?.result,
-  });
-
-  const optimisticMode = useOptimisticThemeMode();
-  const mode = optimisticMode ?? userPreference ?? "system";
-  const nextMode =
-    mode === "system" ? "light" : mode === "light" ? "dark" : "system";
-
+export const Header = () => {
   return (
     <header className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-soft transition-colors duration-300">
       <div className="container mx-auto px-4 py-6 flex justify-between items-center">
@@ -44,19 +25,9 @@ export const Header = ({
               </li>
             </ul>
           </nav>
-          <fetcher.Form method="POST" {...getFormProps(form)}>
-            <input type="hidden" name="theme" value={nextMode} />
-
-            <button type="submit">{themeMap[nextMode]}</button>
-          </fetcher.Form>
+          <ThemeSwitcher />
         </div>
       </div>
     </header>
   );
-};
-
-const themeMap = {
-  light: "🌞",
-  dark: "🌚",
-  system: "🖥️",
 };

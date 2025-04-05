@@ -1,11 +1,7 @@
-import { parseWithZod } from "@conform-to/zod";
 import {
   type LinksFunction,
   type MetaFunction,
-  type ActionFunctionArgs,
   type LoaderFunctionArgs,
-  useFetcher,
-  data,
 } from "react-router";
 import {
   Links,
@@ -15,7 +11,6 @@ import {
   ScrollRestoration,
   useLoaderData,
 } from "react-router";
-import { z } from "zod";
 
 import { Header, Footer } from "#app/components/organisms";
 
@@ -25,19 +20,13 @@ import faviconIco from "./assets/favicon/favicon.ico?url";
 import faviconSvg from "./assets/favicon/favicon.svg?url";
 import webManifest from "./assets/favicon/site.webmanifest?url";
 import { GeneralErrorBoundary } from "./components/pages/error-boundary/error-boundary";
+import { useOptionalTheme } from "./components/pages/theme-switch/theme-switch";
 import fontStylesheet from "./styles/font.css?url";
 import tailwindStylesheet from "./styles/tailwind.css?url";
-import {
-  ClientHintCheck,
-  getHints,
-  useHints,
-  useOptionalHints,
-} from "./utils/client-hints";
+import { ClientHintCheck, getHints } from "./utils/client-hints";
 import { getEnv } from "./utils/env.server";
-import { invariantResponse } from "./utils/invariant";
 import { useNonce } from "./utils/nonce-provider";
-import { useOptionalRequestInfo, useRequestInfo } from "./utils/request-info";
-import { getTheme, setTheme } from "./utils/theme.server";
+import { getTheme } from "./utils/theme.server";
 
 export const meta: MetaFunction = () => [
   { name: "apple-mobile-web-app-title", content: "michalkolacz.com" },
@@ -72,33 +61,7 @@ export const loader = ({ request }: LoaderFunctionArgs) => {
   };
 };
 
-const ThemeFormSchema = z.object({
-  theme: z.enum(["system", "light", "dark"]),
-  // // this is useful for progressive enhancement
-  // redirectTo: z.string().optional(),
-});
-
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const formData = await request.formData();
-  const submission = parseWithZod(formData, {
-    schema: ThemeFormSchema,
-  });
-
-  invariantResponse(submission.status === "success", "Invalid theme received");
-
-  const { theme } = submission.value;
-
-  const responseInit = {
-    headers: {
-      "set-cookie": setTheme(theme),
-    },
-  };
-
-  return data({ result: submission.reply() }, responseInit);
-};
-
 export function Layout({ children }: { children: React.ReactNode }) {
-  const data = useLoaderData<typeof loader>();
   const theme = useOptionalTheme() || "light";
   const nonce = useNonce();
 
@@ -112,7 +75,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body className={`flex flex-col min-h-screen`}>
-        <Header userPreference={data.requestInfo.userPrefs.theme} />
+        <Header />
         <main className="flex-grow container mx-auto px-4 py-8">
           {children}
         </main>
@@ -143,41 +106,5 @@ export default function App() {
     </>
   );
 }
-
-export const useOptimisticThemeMode = () => {
-  const fetcher = useFetcher({ key: "theme" });
-
-  if (fetcher && fetcher.formData) {
-    const submission = parseWithZod(fetcher.formData, {
-      schema: ThemeFormSchema,
-    });
-
-    if (submission.status === "success") {
-      return submission.value.theme;
-    }
-  }
-};
-
-export const useTheme = () => {
-  const hints = useHints();
-  const requestInfo = useRequestInfo();
-  const optimisticMode = useOptimisticThemeMode();
-
-  if (optimisticMode)
-    return optimisticMode === "system" ? hints.theme : optimisticMode;
-
-  return requestInfo.userPrefs.theme ?? hints.theme;
-};
-
-export const useOptionalTheme = () => {
-  const optionalHitns = useOptionalHints();
-  const optionalRequestInfo = useOptionalRequestInfo();
-  const optimisticMode = useOptimisticThemeMode();
-  if (optimisticMode) {
-    return optimisticMode === "system" ? optionalHitns?.theme : optimisticMode;
-  }
-
-  return optionalRequestInfo?.userPrefs.theme ?? optionalHitns?.theme;
-};
 
 export const ErrorBoundary = () => <GeneralErrorBoundary />;
