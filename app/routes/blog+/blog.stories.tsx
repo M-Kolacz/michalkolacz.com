@@ -3,7 +3,8 @@ import { createRoutesStub } from "react-router";
 
 import { layoutDecorator } from "#app/utils/storybook.tsx";
 
-import BlogPage from "./blog";
+// eslint-disable-next-line boundaries/element-types
+import BlogPage from "./index";
 
 import { createBlogPosts } from "#tests/mocks/blog.ts";
 

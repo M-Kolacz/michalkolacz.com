@@ -1,11 +1,11 @@
 import { useLoaderData, type MetaFunction } from "react-router";
 
+import { ArticleCard } from "#app/components/molecules";
+// eslint-disable-next-line boundaries/element-types
+import { Post } from "#app/types/blog.ts";
+import { getBlogPosts } from "#app/utils/blog.server.ts";
+import { blogCache } from "#app/utils/cache.server.ts";
 import { prisma } from "#app/utils/db.server.ts";
-
-import { ArticleCard } from "#app/features/blog/components/molecules";
-import { Post } from "#app/features/blog/types/blog.ts";
-import { getBlogPosts } from "#app/features/blog/utils/blog.server.ts";
-import { blogCache } from "#app/features/blog/utils/cache.server.ts";
 
 export const meta: MetaFunction = () => {
   return [
