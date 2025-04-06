@@ -11,7 +11,6 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
-  console.log({ meSrc });
   return (
     <section className="container mx-auto px-4 py-20 md:py-32">
       <div className="max-w-3xl mx-auto">
