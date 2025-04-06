@@ -3,7 +3,7 @@ import { createRoutesStub } from "react-router";
 
 import { layoutDecorator } from "#app/utils/storybook.tsx";
 
-import Homepage from "./homepage.tsx";
+import Homepage from "./index";
 
 const meta = {
   title: "homepage/components/pages/Homepage",

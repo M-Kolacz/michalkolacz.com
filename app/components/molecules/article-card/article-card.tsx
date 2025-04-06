@@ -1,8 +1,7 @@
 import { Link } from "react-router";
 
 import { Button } from "#app/components/atoms";
-
-import type { Post } from "#app/features/blog/types/blog.ts";
+import type { Post } from "#app/types/blog.ts";
 
 interface ArticleCardProps {
   article: Pick<Post, "title" | "date" | "excerpt" | "slug">;

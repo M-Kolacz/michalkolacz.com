@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 
-import { ThemeSwitcher } from "#app/components/pages/theme-switch/theme-switch.tsx";
+import { ThemeSwitcher } from "#app/routes/resources+/theme-switch.tsx";
 
 export const Header = () => {
   return (

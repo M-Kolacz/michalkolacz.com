@@ -5,12 +5,11 @@ import { Link, LoaderFunctionArgs, useLoaderData } from "react-router";
 import { type MetaFunction } from "react-router";
 
 import { Button } from "#app/components/atoms";
-import { GeneralErrorBoundary } from "#app/components/pages/error-boundary/error-boundary.tsx";
+import { GeneralErrorBoundary } from "#app/components/pages/error-boundary.tsx";
+import { Post } from "#app/types/blog.ts";
+import { getBlogPost } from "#app/utils/blog.server.ts";
+import { blogCache } from "#app/utils/cache.server.ts";
 import { invariantResponse } from "#app/utils/invariant.ts";
-
-import { Post } from "#app/features/blog/types/blog.ts";
-import { getBlogPost } from "#app/features/blog/utils/blog.server.ts";
-import { blogCache } from "#app/features/blog/utils/cache.server.ts";
 
 export const meta: MetaFunction = ({ params }) => {
   const postTitle = params.postTitle;
