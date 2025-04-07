@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { useHints, useOptionalHints } from "#app/utils/client-hints";
 import { invariantResponse } from "#app/utils/invariant.ts";
+import { combineHeaders } from "#app/utils/misc.ts";
 import {
   useOptionalRequestInfo,
   useRequestInfo,
@@ -34,9 +35,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const { theme } = submission.value;
 
   const responseInit = {
-    headers: {
+    headers: combineHeaders({
       "set-cookie": setTheme(theme),
-    },
+    }),
   };
 
   return data({ result: submission.reply() }, responseInit);

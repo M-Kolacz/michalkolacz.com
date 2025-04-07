@@ -8,6 +8,7 @@ const schema = z.object({
   SENTRY_PROJECT: z.string(),
   SENTRY_DSN: z.string(),
   ALLOW_INDEXING: z.enum(["true", "false"]).default("false"),
+  SESSION_SECRET: z.string(),
 });
 
 declare global {
