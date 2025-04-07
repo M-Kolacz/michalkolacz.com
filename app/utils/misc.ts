@@ -18,3 +18,16 @@ export function getErrorMessage(error: unknown) {
   console.error("🛑", "Unable to get error message for error", error);
   return "Unknown Error";
 }
+
+export const combineHeaders = (
+  ...headers: Array<ResponseInit["headers"] | null | undefined>
+) => {
+  const combined = new Headers();
+  for (const header of headers) {
+    if (!header) continue;
+    for (const [key, value] of new Headers(header).entries()) {
+      combined.append(key, value);
+    }
+  }
+  return combined;
+};

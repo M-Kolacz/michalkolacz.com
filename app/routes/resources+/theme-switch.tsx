@@ -5,11 +5,13 @@ import { z } from "zod";
 
 import { useHints, useOptionalHints } from "#app/utils/client-hints";
 import { invariantResponse } from "#app/utils/invariant.ts";
+import { combineHeaders } from "#app/utils/misc.ts";
 import {
   useOptionalRequestInfo,
   useRequestInfo,
 } from "#app/utils/request-info";
 import { setTheme } from "#app/utils/theme.server.ts";
+import { createToastHeaders } from "#app/utils/toast.server.ts";
 
 export const ThemeFormSchema = z.object({
   theme: z.enum(["system", "light", "dark"]),
@@ -33,10 +35,20 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 
   const { theme } = submission.value;
 
+  const toastHeaders = await createToastHeaders({
+    description: "Theme switch",
+    type: "success",
+    title: "THEME SWITCH!!!",
+    id: "theme-switch",
+  });
+
   const responseInit = {
-    headers: {
-      "set-cookie": setTheme(theme),
-    },
+    headers: combineHeaders(
+      {
+        "set-cookie": setTheme(theme),
+      },
+      toastHeaders
+    ),
   };
 
   return data({ result: submission.reply() }, responseInit);

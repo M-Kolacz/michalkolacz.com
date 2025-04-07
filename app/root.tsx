@@ -2,6 +2,7 @@ import {
   type LinksFunction,
   type MetaFunction,
   type LoaderFunctionArgs,
+  data,
 } from "react-router";
 import {
   Links,
@@ -24,8 +25,11 @@ import fontStylesheet from "./styles/font.css?url";
 import tailwindStylesheet from "./styles/tailwind.css?url";
 import { ClientHintCheck, getHints } from "./utils/client-hints";
 import { getEnv } from "./utils/env.server";
+import { combineHeaders } from "./utils/misc";
 import { useNonce } from "./utils/nonce-provider";
 import { getTheme } from "./utils/theme.server";
+import { Toaster, useToast } from "./utils/toast";
+import { getToast } from "./utils/toast.server";
 
 export const meta: MetaFunction = () => [
   { name: "apple-mobile-web-app-title", content: "michalkolacz.com" },
@@ -48,23 +52,33 @@ export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tailwindStylesheet },
 ];
 
-export const loader = ({ request }: LoaderFunctionArgs) => {
-  return {
-    ENV: getEnv(),
-    requestInfo: {
-      hints: getHints(request),
-      userPrefs: {
-        theme: getTheme(request),
+export const loader = async ({ request }: LoaderFunctionArgs) => {
+  const { toast, toastHeaders } = await getToast(request);
+
+  return data(
+    {
+      ENV: getEnv(),
+      requestInfo: {
+        hints: getHints(request),
+        userPrefs: {
+          theme: getTheme(request),
+        },
       },
+      toast: toast,
     },
-  };
+    {
+      headers: combineHeaders(toastHeaders),
+    }
+  );
 };
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const theme = useOptionalTheme() || "light";
   const nonce = useNonce();
 
-  const { ENV } = useLoaderData<typeof loader>();
+  const { ENV, toast } = useLoaderData<typeof loader>();
+
+  useToast(toast);
 
   const allowIndexing = ENV.ALLOW_INDEXING === "true";
   return (
@@ -84,6 +98,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <main className="flex-grow container mx-auto px-4 py-8">
           {children}
         </main>
+        <Toaster closeButton position="bottom-right" theme={theme} />
         <Footer />
         <ScrollRestoration
           getKey={(location) => location.pathname}
