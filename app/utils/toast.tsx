@@ -28,13 +28,17 @@ export const Toaster = ({ theme, ...props }: ToasterProps) => {
 
 export const useToast = (toast: Toast | null) => {
   useEffect(() => {
-    if (toast) {
-      setTimeout(() => {
-        showToast[toast.type](toast.title, {
-          id: toast.id,
-          description: toast.description,
-        });
-      }, 0);
-    }
+    if (!toast) return;
+
+    const toastTimer = setTimeout(() => {
+      showToast[toast.type](toast.title, {
+        id: toast.id,
+        description: toast.description,
+      });
+    }, 0);
+
+    return () => {
+      clearTimeout(toastTimer);
+    };
   }, [toast]);
 };
