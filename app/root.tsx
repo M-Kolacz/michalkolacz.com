@@ -40,6 +40,8 @@ import { type Theme, getTheme } from './utils/theme.server.ts'
 import { makeTimings, time } from './utils/timing.server.ts'
 import { getToast } from './utils/toast.server.ts'
 import { useOptionalUser } from './utils/user.ts'
+import { TranslationProvider } from './utils/i18n/react.tsx'
+import en from './utils/i18n/translations/en.ts'
 
 export const links: Route.LinksFunction = () => {
 	return [
@@ -201,26 +203,35 @@ function App() {
 	useToast(data.toast)
 
 	return (
-		<OpenImgContextProvider
-			optimizerEndpoint="/resources/images"
-			getSrc={getImgSrc}
+		<TranslationProvider
+			fallbackLocale={['en']}
+			translations={{
+				en,
+			}}
 		>
-			<div className="flex min-h-screen flex-col justify-between">
-				<header className="container py-6">
-					<h1 className="text-h1 text-black dark:text-white">Michal Kolacz</h1>
-				</header>
+			<OpenImgContextProvider
+				optimizerEndpoint="/resources/images"
+				getSrc={getImgSrc}
+			>
+				<div className="flex min-h-screen flex-col justify-between">
+					<header className="container py-6">
+						<h1 className="text-h1 text-black dark:text-white">
+							Michal Kolacz
+						</h1>
+					</header>
 
-				<div className="flex flex-1 flex-col">
-					<Outlet />
-				</div>
+					<div className="flex flex-1 flex-col">
+						<Outlet />
+					</div>
 
-				<div className="container flex justify-between pb-5">
-					<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
+					<div className="container flex justify-between pb-5">
+						<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
+					</div>
 				</div>
-			</div>
-			<EpicToaster closeButton position="top-center" theme={theme} />
-			<EpicProgress />
-		</OpenImgContextProvider>
+				<EpicToaster closeButton position="top-center" theme={theme} />
+				<EpicProgress />
+			</OpenImgContextProvider>
+		</TranslationProvider>
 	)
 }
 
@@ -251,3 +262,9 @@ export default AppWithProviders
 // this is a last resort error boundary. There's not much useful information we
 // can offer at this level.
 export const ErrorBoundary = GeneralErrorBoundary
+
+declare module './utils/i18n/lib/my-translations' {
+	interface Register {
+		translations: typeof en
+	}
+}
