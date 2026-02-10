@@ -153,6 +153,16 @@ function Document({
 				<Meta />
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width,initial-scale=1" />
+				<link rel="preconnect" href="https://fonts.googleapis.com" />
+				<link
+					rel="preconnect"
+					href="https://fonts.gstatic.com"
+					crossOrigin="anonymous"
+				/>
+				<link
+					href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&family=Roboto+Condensed:wght@700&display=swap"
+					rel="stylesheet"
+				/>
 				{allowIndexing ? null : (
 					<meta name="robots" content="noindex, nofollow" />
 				)}
@@ -201,6 +211,9 @@ function App() {
 		>
 			<div className="flex min-h-screen flex-col justify-between">
 				<header className="container py-6">
+					<h1 className="text-h1 text-black dark:text-white">
+						Michal Kolacz
+					</h1>
 					<nav className="flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap md:gap-8">
 						<Logo />
 						<div className="ml-auto hidden max-w-sm flex-1 sm:block">
