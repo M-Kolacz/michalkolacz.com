@@ -11,6 +11,7 @@ import { envOnlyMacros } from 'vite-env-only'
 import { iconsSpritesheet } from 'vite-plugin-icons-spritesheet'
 
 const MODE = process.env.NODE_ENV
+const IS_STORYBOOK = process.env.STORYBOOK === 'true'
 
 export default defineConfig((config) => ({
 	build: {
@@ -40,9 +41,9 @@ export default defineConfig((config) => ({
 	},
 	sentryConfig,
 	plugins: [
-		envOnlyMacros(),
+		IS_STORYBOOK ? null : envOnlyMacros(),
 		tailwindcss(),
-		reactRouterDevTools(),
+		IS_STORYBOOK ? null : reactRouterDevTools(),
 
 		iconsSpritesheet({
 			inputDir: './other/svg-icons',
@@ -53,7 +54,7 @@ export default defineConfig((config) => ({
 		}),
 		// it would be really nice to have this enabled in tests, but we'll have to
 		// wait until https://github.com/remix-run/remix/issues/9871 is fixed
-		MODE === 'test' ? null : reactRouter(),
+		MODE === 'test' || IS_STORYBOOK ? null : reactRouter(),
 		MODE === 'production' && process.env.SENTRY_AUTH_TOKEN
 			? sentryReactRouter(sentryConfig, config)
 			: null,
