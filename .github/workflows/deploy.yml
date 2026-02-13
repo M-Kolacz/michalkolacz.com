@@ -88,7 +88,13 @@ jobs:
         run: npx prisma migrate deploy && npx prisma generate --sql
 
       - name: ⚡ Run vitest
-        run: npm run test -- --coverage
+        run: npm run test:coverage
+
+      - name: 📊 Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: M-Kolacz/michalkolacz.com
 
   playwright:
     name: 🎭 Playwright

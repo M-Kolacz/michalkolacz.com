@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { codecovVitePlugin } from '@codecov/vite-plugin'
@@ -77,14 +78,15 @@ export default defineConfig((config) => ({
 		projects: [
 			{
 				extends: true,
+
 				test: {
 					name: 'unit',
-					include: ['./app/**/*.test.{ts,tsx}'],
+					include: ['./app/**/*.test.ts'],
 					setupFiles: ['./tests/setup/setup-test-env.ts'],
 					globalSetup: ['./tests/setup/global-setup.ts'],
 					restoreMocks: true,
 					coverage: {
-						include: ['app/**/*.{ts,tsx}'],
+						include: ['app/**/*.ts'],
 						all: true,
 					},
 				},
@@ -96,11 +98,7 @@ export default defineConfig((config) => ({
 					}),
 				],
 				optimizeDeps: {
-					exclude: [
-						'execa',
-						'npm-run-path',
-						'unicorn-magic',
-					],
+					exclude: ['execa', 'npm-run-path', 'unicorn-magic'],
 				},
 				test: {
 					name: 'storybook',
@@ -111,7 +109,10 @@ export default defineConfig((config) => ({
 						instances: [{ browser: 'chromium' }],
 					},
 					setupFiles: ['.storybook/vitest.setup.ts'],
-					globalSetup: [],
+					coverage: {
+						include: ['app/**/*.stories.tsx'],
+						all: true,
+					},
 				},
 			},
 		],
