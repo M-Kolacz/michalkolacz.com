@@ -1,0 +1,8 @@
+FROM mcr.microsoft.com/playwright:v1.58.0-noble  
+WORKDIR /app
+COPY package.json package-lock.json .npmrc ./
+RUN npm ci
+COPY .storybook/modes.ts ./.storybook/
+COPY tests/visual.spec.ts ./tests/
+COPY playwright-visual.config.ts ./
+CMD ["npx", "playwright", "test", "--config=playwright-visual.config.ts"]

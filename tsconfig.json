@@ -1,5 +1,5 @@
 {
-	"include": ["**/*.ts", "**/*.tsx", ".react-router/types/**/*"],
+	"include": ["**/*.ts", "**/*.tsx", ".react-router/types/**/*", ".storybook/**/*.ts"],
 	"extends": ["@epic-web/config/typescript"],
 	"compilerOptions": {
 		// TODO: Probably should move this into epic-web/config
