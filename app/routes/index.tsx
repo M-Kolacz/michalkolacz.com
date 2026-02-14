@@ -1,5 +1,5 @@
 import { useTranslation } from '#app/utils/i18n/react.tsx'
-import heroImage from '../../assets/homepage-hero.jpg'
+import heroImage from '../assets/homepage-hero.jpg'
 import { type Route } from './+types/index.ts'
 
 export const meta: Route.MetaFunction = () => [{ title: 'Michal Kolacz' }]

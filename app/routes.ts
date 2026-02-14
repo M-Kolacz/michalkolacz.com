@@ -14,5 +14,6 @@ export default autoRoutes({
 		// my-route.[server].tsx
 		'**/*.server.*',
 		'**/*.client.*',
+		'**/*.stories.*',
 	],
 }) satisfies RouteConfig

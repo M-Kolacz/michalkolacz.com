@@ -139,24 +139,24 @@
 	--color-sidebar-primary: var(--sidebar-primary);
 	--color-sidebar-foreground: var(--sidebar-foreground);
 	--color-sidebar: var(--sidebar);
-  --animate-accordion-down: accordion-down 0.2s ease-out;
-  --animate-accordion-up: accordion-up 0.2s ease-out;
+	--animate-accordion-down: accordion-down 0.2s ease-out;
+	--animate-accordion-up: accordion-up 0.2s ease-out;
 
-  @keyframes accordion-down {
-    from {
-      height: 0;
+	@keyframes accordion-down {
+		from {
+			height: 0;
 		}
-    to {
-      height: var(--radix-accordion-content-height);
+		to {
+			height: var(--radix-accordion-content-height);
 		}
 	}
 
-  @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height);
+	@keyframes accordion-up {
+		from {
+			height: var(--radix-accordion-content-height);
 		}
-    to {
-      height: 0;
+		to {
+			height: 0;
 		}
 	}
 }
@@ -259,7 +259,7 @@
 }
 
 @utility text-h1 {
-	font-family: 'Roboto Condensed', sans-serif;
+	font-family: 'Roboto Condensed Variable', sans-serif;
 	font-weight: 700;
 	font-size: 3rem;
 	line-height: 3rem;
@@ -276,7 +276,7 @@
 }
 
 @utility text-h2 {
-	font-family: 'Roboto Condensed', sans-serif;
+	font-family: 'Roboto Condensed Variable', sans-serif;
 	font-weight: 700;
 	font-size: 1.875rem;
 	line-height: 2.25rem;
@@ -321,10 +321,10 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+	* {
+		@apply border-border outline-ring/50;
 	}
-  body {
-    @apply bg-background text-foreground;
+	body {
+		@apply bg-background text-foreground;
 	}
 }
