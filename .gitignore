@@ -17,7 +17,7 @@ node_modules
 /tests/fixtures/openimg/
 /coverage
 
-/other/cache.db
+/other/cache*.db
 
 # Easy way to create temporary files/folders that won't accidentally be added to git
 *.local.*
@@ -26,3 +26,4 @@ node_modules
 /app/components/ui/icons
 .react-router/
 /storybook-static
+test-report.junit.xml
