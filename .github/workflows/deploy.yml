@@ -102,6 +102,12 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: M-Kolacz/michalkolacz.com
 
+      - name: 📊 Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
   playwright:
     name: 🎭 Playwright
     runs-on: ubuntu-22.04
