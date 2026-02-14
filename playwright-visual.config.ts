@@ -4,6 +4,7 @@ const BASE_URL = process.env.TEST_BASE_URL || 'http://localhost:6006'
 
 export default defineConfig({
 	testDir: './tests',
+	testMatch: 'visual.spec.ts',
 	outputDir: './tests/__failed-snapshots__',
 	fullyParallel: true,
 	snapshotPathTemplate: '{testDir}/__screenshots__/{arg}{ext}',
