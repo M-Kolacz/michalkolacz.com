@@ -30,6 +30,9 @@ jobs:
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
 
+      - name: 📥 Install Playwright Browsers
+        run: npm run test:e2e:install
+
       - name: 🏄 Copy test env vars
         run: cp .env.example .env
 
@@ -81,6 +84,9 @@ jobs:
       - name: 📥 Download deps
         uses: bahmutov/npm-install@v1
 
+      - name: 📥 Install Playwright Browsers
+        run: npm run test:e2e:install
+
       - name: 🏄 Copy test env vars
         run: cp .env.example .env
 
@@ -88,7 +94,13 @@ jobs:
         run: npx prisma migrate deploy && npx prisma generate --sql
 
       - name: ⚡ Run vitest
-        run: npm run test -- --coverage
+        run: npm run test:coverage
+
+      - name: 📊 Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: M-Kolacz/michalkolacz.com
 
   playwright:
     name: 🎭 Playwright
