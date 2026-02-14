@@ -11,6 +11,16 @@ export default [
 		rules: { 'react-hooks/rules-of-hooks': 'off' },
 	},
 	{
+		files: ['**/.storybook/**/*'],
+		languageOptions: {
+			parserOptions: {
+				projectService: {
+					allowDefaultProject: ['.storybook/*.ts'],
+				},
+			},
+		},
+	},
+	{
 		ignores: ['.react-router/*'],
 	},
 ]
