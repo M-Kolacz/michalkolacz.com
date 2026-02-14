@@ -1,8 +1,6 @@
 import { type Decorator } from '@storybook/react-vite'
 import { createRoutesStub } from 'react-router'
-import { AppShell } from '#app/components/app-shell.tsx'
-
-const AppShellWrapper = () => <AppShell theme="light" />
+import AppLayout from '../app/routes/_layout.tsx'
 
 const mockRootLoaderData = {
 	user: null,
@@ -26,7 +24,7 @@ export const withAppShell: Decorator = (Story) => {
 		{
 			id: 'root',
 			path: '/',
-			Component: AppShellWrapper,
+			Component: AppLayout,
 			loader: () => mockRootLoaderData,
 			children: [
 				{
