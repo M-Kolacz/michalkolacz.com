@@ -1,4 +1,5 @@
-import  { type Preview } from '@storybook/react-vite'
+import { type Preview } from '@storybook/react-vite'
+import { withAppShell } from './decorators.tsx'
 import '../app/styles/tailwind.css'
 
 const preview: Preview = {
@@ -13,6 +14,18 @@ const preview: Preview = {
 			test: 'todo',
 		},
 	},
+	decorators: [
+		(Story, context) => {
+			document.documentElement.classList.add('light')
+			document.body.classList.add('bg-background', 'text-foreground')
+
+			if (context.title.toLowerCase().includes('pages')) {
+				return withAppShell(Story, context)
+			}
+
+			return Story()
+		},
+	],
 }
 
 export default preview

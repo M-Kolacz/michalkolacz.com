@@ -1,32 +1,18 @@
-import { OpenImgContextProvider } from 'openimg/react'
 import {
 	data,
-	Link,
 	Links,
 	Meta,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
 	useLoaderData,
-	useMatches,
 } from 'react-router'
-import { HoneypotProvider } from 'remix-utils/honeypot/react'
 import { type Route } from './+types/root.ts'
 import appleTouchIconAssetUrl from './assets/favicons/apple-touch-icon.png'
 import faviconAssetUrl from './assets/favicons/favicon.svg'
 import { GeneralErrorBoundary } from './components/error-boundary.tsx'
-import { EpicProgress } from './components/progress-bar.tsx'
-import { SearchBar } from './components/search-bar.tsx'
-import { useToast } from './components/toaster.tsx'
-import { Button } from './components/ui/button.tsx'
 import { href as iconsHref } from './components/ui/icon.tsx'
-import { EpicToaster } from './components/ui/sonner.tsx'
-import { UserDropdown } from './components/user-dropdown.tsx'
-import {
-	ThemeSwitch,
-	useOptionalTheme,
-	useTheme,
-} from './routes/resources/theme-switch.tsx'
+import { useOptionalTheme } from './routes/resources/theme-switch.tsx'
 import tailwindStyleSheetUrl from './styles/tailwind.css?url'
 import { getUserId, logout } from './utils/auth.server.ts'
 import { ClientHintCheck, getHints } from './utils/client-hints.tsx'
@@ -34,14 +20,12 @@ import { prisma } from './utils/db.server.ts'
 import { getEnv } from './utils/env.server.ts'
 import { pipeHeaders } from './utils/headers.server.ts'
 import { honeypot } from './utils/honeypot.server.ts'
-import { combineHeaders, getDomainUrl, getImgSrc } from './utils/misc.tsx'
+import type en from './utils/i18n/translations/en.ts'
+import { combineHeaders, getDomainUrl } from './utils/misc.tsx'
 import { useNonce } from './utils/nonce-provider.ts'
 import { type Theme, getTheme } from './utils/theme.server.ts'
 import { makeTimings, time } from './utils/timing.server.ts'
 import { getToast } from './utils/toast.server.ts'
-import { useOptionalUser } from './utils/user.ts'
-import { TranslationProvider } from './utils/i18n/react.tsx'
-import en from './utils/i18n/translations/en.ts'
 
 export const links: Route.LinksFunction = () => {
 	return [
@@ -198,66 +182,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
-	const data = useLoaderData<typeof loader>()
-	const theme = useTheme()
-	useToast(data.toast)
-
-	return (
-		<TranslationProvider
-			fallbackLocale={['en']}
-			translations={{
-				en,
-			}}
-		>
-			<OpenImgContextProvider
-				optimizerEndpoint="/resources/images"
-				getSrc={getImgSrc}
-			>
-				<div className="flex min-h-screen flex-col justify-between">
-					<header className="container py-6">
-						<h1 className="text-h1 text-black dark:text-white">
-							Michal Kolacz
-						</h1>
-					</header>
-
-					<div className="flex flex-1 flex-col">
-						<Outlet />
-					</div>
-
-					<div className="container flex justify-between pb-5">
-						<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
-					</div>
-				</div>
-				<EpicToaster closeButton position="top-center" theme={theme} />
-				<EpicProgress />
-			</OpenImgContextProvider>
-		</TranslationProvider>
-	)
+	return <Outlet />
 }
 
-function Logo() {
-	return (
-		<Link to="/" className="group grid leading-snug">
-			<span className="font-light transition group-hover:-translate-x-1">
-				epic
-			</span>
-			<span className="font-bold transition group-hover:translate-x-1">
-				notes
-			</span>
-		</Link>
-	)
-}
-
-function AppWithProviders() {
-	const data = useLoaderData<typeof loader>()
-	return (
-		<HoneypotProvider {...data.honeyProps}>
-			<App />
-		</HoneypotProvider>
-	)
-}
-
-export default AppWithProviders
+export default App
 
 // this is a last resort error boundary. There's not much useful information we
 // can offer at this level.
