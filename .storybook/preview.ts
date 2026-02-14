@@ -1,6 +1,7 @@
 import { type Preview } from '@storybook/react-vite'
 import { withAppShell } from './decorators.tsx'
 import '../app/styles/tailwind.css'
+import '../app/styles/font.css'
 
 const preview: Preview = {
 	parameters: {
