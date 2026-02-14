@@ -1,6 +1,14 @@
 import * as setCookieParser from 'set-cookie-parser'
 import { sessionKey } from '#app/utils/auth.server.ts'
+import { initI18n } from '#app/utils/i18n/lib/index.ts'
+import en from '#app/utils/i18n/translations/en.ts'
 import { authSessionStorage } from '#app/utils/session.server.ts'
+
+export const { t } = initI18n({
+	fallbackLocale: 'en',
+	locale: 'en',
+	translations: { en },
+})
 
 export const BASE_URL = 'https://www.epicstack.dev'
 

@@ -258,6 +258,47 @@
 	}
 }
 
+@utility text-h1 {
+	font-family: 'Roboto Condensed', sans-serif;
+	font-weight: 700;
+	font-size: 3rem;
+	line-height: 3rem;
+
+	@media (width >= 768px) {
+		font-size: 3.75rem;
+		line-height: 3.75rem;
+	}
+
+	@media (width >= 1024px) {
+		font-size: 4.5rem;
+		line-height: 4.5rem;
+	}
+}
+
+@utility text-h2 {
+	font-family: 'Roboto Condensed', sans-serif;
+	font-weight: 700;
+	font-size: 1.875rem;
+	line-height: 2.25rem;
+
+	@media (width >= 768px) {
+		font-size: 2.25rem;
+		line-height: 2.5rem;
+	}
+
+	@media (width >= 1024px) {
+		font-size: 3rem;
+		line-height: 3.75rem;
+	}
+}
+
+@utility text-p1 {
+	font-family: 'Roboto', sans-serif;
+	font-weight: 400;
+	font-size: 1.25rem;
+	line-height: 1.75rem;
+}
+
 @utility container {
 	margin-inline: auto;
 	padding-inline: 2rem;

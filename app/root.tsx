@@ -40,6 +40,8 @@ import { type Theme, getTheme } from './utils/theme.server.ts'
 import { makeTimings, time } from './utils/timing.server.ts'
 import { getToast } from './utils/toast.server.ts'
 import { useOptionalUser } from './utils/user.ts'
+import { TranslationProvider } from './utils/i18n/react.tsx'
+import en from './utils/i18n/translations/en.ts'
 
 export const links: Route.LinksFunction = () => {
 	return [
@@ -153,6 +155,16 @@ function Document({
 				<Meta />
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width,initial-scale=1" />
+				<link rel="preconnect" href="https://fonts.googleapis.com" />
+				<link
+					rel="preconnect"
+					href="https://fonts.gstatic.com"
+					crossOrigin="anonymous"
+				/>
+				<link
+					href="https://fonts.googleapis.com/css2?family=Roboto:wght@400&family=Roboto+Condensed:wght@700&display=swap"
+					rel="stylesheet"
+				/>
 				{allowIndexing ? null : (
 					<meta name="robots" content="noindex, nofollow" />
 				)}
@@ -187,50 +199,39 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 function App() {
 	const data = useLoaderData<typeof loader>()
-	const user = useOptionalUser()
 	const theme = useTheme()
-	const matches = useMatches()
-	const isOnSearchPage = matches.find((m) => m.id === 'routes/users/index')
-	const searchBar = isOnSearchPage ? null : <SearchBar status="idle" />
 	useToast(data.toast)
 
 	return (
-		<OpenImgContextProvider
-			optimizerEndpoint="/resources/images"
-			getSrc={getImgSrc}
+		<TranslationProvider
+			fallbackLocale={['en']}
+			translations={{
+				en,
+			}}
 		>
-			<div className="flex min-h-screen flex-col justify-between">
-				<header className="container py-6">
-					<nav className="flex flex-wrap items-center justify-between gap-4 sm:flex-nowrap md:gap-8">
-						<Logo />
-						<div className="ml-auto hidden max-w-sm flex-1 sm:block">
-							{searchBar}
-						</div>
-						<div className="flex items-center gap-10">
-							{user ? (
-								<UserDropdown />
-							) : (
-								<Button asChild variant="default" size="lg">
-									<Link to="/login">Log In</Link>
-								</Button>
-							)}
-						</div>
-						<div className="block w-full sm:hidden">{searchBar}</div>
-					</nav>
-				</header>
+			<OpenImgContextProvider
+				optimizerEndpoint="/resources/images"
+				getSrc={getImgSrc}
+			>
+				<div className="flex min-h-screen flex-col justify-between">
+					<header className="container py-6">
+						<h1 className="text-h1 text-black dark:text-white">
+							Michal Kolacz
+						</h1>
+					</header>
 
-				<div className="flex flex-1 flex-col">
-					<Outlet />
-				</div>
+					<div className="flex flex-1 flex-col">
+						<Outlet />
+					</div>
 
-				<div className="container flex justify-between pb-5">
-					<Logo />
-					<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
+					<div className="container flex justify-between pb-5">
+						<ThemeSwitch userPreference={data.requestInfo.userPrefs.theme} />
+					</div>
 				</div>
-			</div>
-			<EpicToaster closeButton position="top-center" theme={theme} />
-			<EpicProgress />
-		</OpenImgContextProvider>
+				<EpicToaster closeButton position="top-center" theme={theme} />
+				<EpicProgress />
+			</OpenImgContextProvider>
+		</TranslationProvider>
 	)
 }
 
@@ -261,3 +262,9 @@ export default AppWithProviders
 // this is a last resort error boundary. There's not much useful information we
 // can offer at this level.
 export const ErrorBoundary = GeneralErrorBoundary
+
+declare module './utils/i18n/lib/my-translations' {
+	interface Register {
+		translations: typeof en
+	}
+}
