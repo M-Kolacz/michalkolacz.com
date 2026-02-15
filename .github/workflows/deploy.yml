@@ -250,6 +250,9 @@ jobs:
     name: 🚀 Deploy
     runs-on: ubuntu-24.04
     needs: [lint, typecheck, vitest, playwright, container]
+    environment:
+      name: Dev
+      url: https://michalkolacz-com-5b79.fly.dev/
     # only deploy on pushes
     if: ${{ github.event_name == 'push' }}
     steps:
