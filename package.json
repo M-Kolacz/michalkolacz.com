@@ -55,7 +55,7 @@
     "@nasa-gcn/remix-seo": "^2.0.1",
     "@nichtsam/helmet": "^0.3.1",
     "@octokit/plugin-throttling": "^11.0.3",
-    "@octokit/rest": "^22.0.1",
+    "@octokit/rest": "^20.1.2",
     "@oslojs/crypto": "^1.0.1",
     "@oslojs/encoding": "^1.1.0",
     "@paralleldrive/cuid2": "^3.3.0",

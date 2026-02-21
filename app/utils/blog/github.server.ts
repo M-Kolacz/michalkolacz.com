@@ -109,7 +109,7 @@ async function downloadFileBySha(sha: string) {
 		repo: REPO,
 		file_sha: sha,
 	})
-	const encoding = data.encoding as Parameters<typeof Buffer.from>[1]
+	const encoding = data.encoding as BufferEncoding
 	return Buffer.from(data.content, encoding).toString()
 }
 
