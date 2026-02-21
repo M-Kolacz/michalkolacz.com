@@ -1,8 +1,7 @@
-import { getMDXComponent } from 'mdx-bundler/client'
-import { useMemo } from 'react'
 import { data, useLoaderData } from 'react-router'
 import { type MetaFunction, type LoaderFunctionArgs } from 'react-router'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
+import { useMdxComponent } from '#app/utils/blog/mdx-components.tsx'
 import { getMdxPage } from '#app/utils/blog/mdx.server.ts'
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -25,7 +24,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export default function BlogPost() {
 	const { page } = useLoaderData<typeof loader>()
-	const Component = useMemo(() => getMDXComponent(page.code), [page.code])
+	const Component = useMdxComponent(page.code)
 
 	return (
 		<main className="container py-12">
@@ -36,7 +35,7 @@ export default function BlogPost() {
 					{page.readTime ? ` · ${page.readTime.text}` : null}
 				</p>
 			</header>
-			<article>
+			<article className="prose dark:prose-invert max-w-none">
 				<Component />
 			</article>
 		</main>
