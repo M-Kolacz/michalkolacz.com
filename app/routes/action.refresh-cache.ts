@@ -1,11 +1,11 @@
 import crypto from 'node:crypto'
 import { data } from 'react-router'
-import { ensurePrimary } from '#app/utils/litefs.server.ts'
 import {
 	getMdxPage,
 	getBlogMdxListItems,
 	getMdxDirList,
 } from '#app/utils/blog/mdx.server.ts'
+import { ensurePrimary } from '#app/utils/litefs.server.ts'
 
 type PushEventCommit = {
 	added: Array<string>
@@ -47,7 +47,7 @@ export async function action({ request }: { request: Request }) {
 		throw data({ error: 'Invalid signature' }, { status: 401 })
 	}
 
-	const payload: PushEventPayload = JSON.parse(rawBody)
+	const payload = JSON.parse(rawBody) as PushEventPayload
 
 	if (payload.ref !== 'refs/heads/master') {
 		return data({ ignored: true, reason: 'not master branch' })
