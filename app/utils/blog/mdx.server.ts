@@ -1,15 +1,12 @@
 import { format } from 'date-fns'
-import { type GitHubFile, type MdxPage, type MdxListItem } from './types.ts'
-import { compileMdx } from './compile-mdx.server.ts'
-import {
-	downloadDirList,
-	downloadMdxFileOrDirectory,
-} from './github.server.ts'
 import { cache, cachified } from '#app/utils/cache.server.ts'
 import { type Timings } from '#app/utils/timing.server.ts'
+import { compileMdx } from './compile-mdx.server.ts'
+import { downloadDirList, downloadMdxFileOrDirectory } from './github.server.ts'
+import { type GitHubFile, type MdxPage, type MdxListItem } from './types.ts'
 
 type CachifiedOptions = {
-	forceFresh?: boolean | string
+	forceFresh?: boolean
 	request?: Request
 	ttl?: number
 	timings?: Timings
@@ -26,12 +23,11 @@ export async function getMdxPage(
 	{ slug }: { slug: string },
 	options: CachifiedOptions,
 ): Promise<MdxPage | null> {
-	const { forceFresh, ttl = defaultTTL, request, timings } = options
+	const { forceFresh, ttl = defaultTTL, timings } = options
 	const key = `mdx-page:blog:${slug}:compiled`
 	const page = await cachified({
 		key,
 		cache,
-		request,
 		timings,
 		ttl,
 		staleWhileRevalidate: defaultStaleWhileRevalidate,
@@ -73,11 +69,10 @@ export async function getMdxPagesInDirectory(options: CachifiedOptions) {
 }
 
 export async function getMdxDirList(options?: CachifiedOptions) {
-	const { forceFresh, ttl = defaultTTL, request, timings } = options ?? {}
+	const { forceFresh, ttl = defaultTTL, timings } = options ?? {}
 	const key = 'blog:dir-list'
 	return cachified({
 		cache,
-		request,
 		timings,
 		ttl,
 		staleWhileRevalidate: defaultStaleWhileRevalidate,
@@ -103,11 +98,10 @@ export async function getMdxDirList(options?: CachifiedOptions) {
 export async function getBlogMdxListItems(
 	options: CachifiedOptions,
 ): Promise<Array<MdxListItem>> {
-	const { request, forceFresh, ttl = defaultTTL, timings } = options
+	const { forceFresh, ttl = defaultTTL, timings } = options
 	const key = 'blog:mdx-list-items'
 	return cachified({
 		cache,
-		request,
 		timings,
 		ttl,
 		staleWhileRevalidate: defaultStaleWhileRevalidate,
@@ -115,9 +109,7 @@ export async function getBlogMdxListItems(
 		key,
 		getFreshValue: async () => {
 			let pages = await getMdxPagesInDirectory(options).then((allPosts) =>
-				allPosts.filter(
-					(p) => !p.frontmatter.draft && !p.frontmatter.unlisted,
-				),
+				allPosts.filter((p) => !p.frontmatter.draft && !p.frontmatter.unlisted),
 			)
 
 			pages = pages.sort((a, z) => {
@@ -135,11 +127,10 @@ export async function downloadMdxFilesCached(
 	slug: string,
 	options: CachifiedOptions,
 ) {
-	const { forceFresh, ttl = defaultTTL, request, timings } = options
+	const { forceFresh, ttl = defaultTTL, timings } = options
 	const key = `blog:${slug}:downloaded`
 	const downloaded = await cachified({
 		cache,
-		request,
 		timings,
 		ttl,
 		staleWhileRevalidate: defaultStaleWhileRevalidate,
