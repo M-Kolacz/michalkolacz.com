@@ -131,6 +131,7 @@ app.use((req, res, next) => {
 		'/settings/profile',
 		'/resources/login',
 		'/resources/verify',
+		'/action/refresh-cache',
 	]
 	if (req.method !== 'GET' && req.method !== 'HEAD') {
 		if (strongPaths.some((p) => req.path.includes(p))) {
