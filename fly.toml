@@ -38,14 +38,14 @@ script_checks = [ ]
   port = 443
 
   [[services.tcp_checks]]
-  grace_period = "1s"
+  grace_period = "180s"
   interval = "15s"
   restart_limit = 0
   timeout = "2s"
 
   [[services.http_checks]]
   interval = "10s"
-  grace_period = "5s"
+  grace_period = "180s"
   method = "get"
   path = "/resources/healthcheck"
   protocol = "http"
@@ -54,7 +54,7 @@ script_checks = [ ]
   headers = { }
 
   [[services.http_checks]]
-  grace_period = "10s"
+  grace_period = "180s"
   interval = "30s"
   method = "GET"
   timeout = "5s"
