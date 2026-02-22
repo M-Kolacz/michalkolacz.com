@@ -1,13 +1,60 @@
 ---
 title: Hello World
-description: My first blog post
+description: My first blog post — exploring the blog setup, MDX features, and what's coming next.
 date: '2026-02-21'
+categories: ['meta']
 ---
 
-# Hello World
+Welcome to my blog. This post doubles as a test of the MDX pipeline and a quick
+intro to the features available for future writing.
 
-Welcome to my blog! This is a test post to verify the blog routes work correctly.
+## Code highlighting
+
+TypeScript with Shiki dual-theme (light and dark):
+
+```ts
+function greet(name: string): string {
+  return `Hello, ${name}!`
+}
+```
+
+A JSX example:
+
+```tsx
+function Card({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-lg border p-4">
+      <h3>{title}</h3>
+      {children}
+    </div>
+  )
+}
+```
+
+## GitHub Flavored Markdown
+
+Tables, strikethrough, and task lists all work out of the box.
+
+| Feature            | Status |
+| ------------------ | ------ |
+| Syntax highlighting | Done  |
+| oEmbed embeds      | Done   |
+| Draft preview      | Done   |
+
+- [x] Write first post
+- [ ] Write second post
+- [ ] ~~Procrastinate~~ — never!
+
+## Callouts
+
+<Callout variant="info">
+  This is an info callout rendered via a custom MDX component.
+</Callout>
+
+<Callout variant="warning">
+  Be careful — this is a warning callout.
+</Callout>
 
 ## What's next?
 
-Stay tuned for more content.
+More posts on web development and software engineering are coming. Stay tuned.
