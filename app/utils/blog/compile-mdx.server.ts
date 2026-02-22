@@ -1,6 +1,12 @@
 import { bundleMDX } from 'mdx-bundler'
 import PQueue from 'p-queue'
 import calculateReadingTime from 'reading-time'
+import rehypeAutolinkHeadings from 'rehype-autolink-headings'
+import rehypeSlug from 'rehype-slug'
+import remarkGfm from 'remark-gfm'
+import remarkUnwrapImages from 'remark-unwrap-images'
+import { rehypePlugins } from './rehype-plugins.server'
+import { remarkPlugins } from './remark-plugins.server'
 import { type GitHubFile, type Frontmatter, frontmatterSchema } from './types'
 
 async function compileMdx(slug: string, githubFiles: Array<GitHubFile>) {
@@ -24,6 +30,21 @@ async function compileMdx(slug: string, githubFiles: Array<GitHubFile>) {
 		const { frontmatter, code } = await bundleMDX({
 			source: indexFile.content,
 			files,
+			mdxOptions(options) {
+				options.remarkPlugins = [
+					...(options.remarkPlugins ?? []),
+					remarkGfm,
+					remarkUnwrapImages,
+					...remarkPlugins,
+				]
+				options.rehypePlugins = [
+					...(options.rehypePlugins ?? []),
+					rehypeSlug,
+					[rehypeAutolinkHeadings, { behavior: 'wrap' }],
+					...rehypePlugins,
+				]
+				return options
+			},
 		})
 		const validatedFrontmatter = frontmatterSchema.parse(frontmatter)
 		const readTime = calculateReadingTime(indexFile.content)
