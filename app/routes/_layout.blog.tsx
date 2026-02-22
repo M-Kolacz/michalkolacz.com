@@ -1,12 +1,30 @@
 import { Link, useLoaderData } from 'react-router'
-import { type MetaFunction } from 'react-router'
+import { type MetaFunction, type LoaderFunctionArgs } from 'react-router'
 import { getBlogMdxListItems } from '#app/utils/blog/mdx.server.ts'
+import { getDomainUrl } from '#app/utils/misc.tsx'
 
-export const meta: MetaFunction = () => [{ title: 'Blog | Michal Kolacz' }]
+const description = 'Articles about web development, software engineering, and more.'
 
-export async function loader() {
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	const canonicalUrl = data?.canonicalUrl
+
+	return [
+		{ title: 'Blog | Michal Kolacz' },
+		{ name: 'description', content: description },
+		{ property: 'og:title', content: 'Blog | Michal Kolacz' },
+		{ property: 'og:description', content: description },
+		{ property: 'og:type', content: 'website' },
+		...(canonicalUrl ? [{ property: 'og:url', content: canonicalUrl }] : []),
+		{ name: 'twitter:card', content: 'summary' },
+		{ name: 'twitter:title', content: 'Blog | Michal Kolacz' },
+		{ name: 'twitter:description', content: description },
+	]
+}
+
+export async function loader({ request }: LoaderFunctionArgs) {
 	const posts = await getBlogMdxListItems({})
-	return { posts }
+	const canonicalUrl = `${getDomainUrl(request)}/blog`
+	return { posts, canonicalUrl }
 }
 
 export default function BlogIndex() {

@@ -3,23 +3,42 @@ import { type MetaFunction, type LoaderFunctionArgs } from 'react-router'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { useMdxComponent } from '#app/utils/blog/mdx-components.tsx'
 import { getMdxPage } from '#app/utils/blog/mdx.server.ts'
+import { getDomainUrl } from '#app/utils/misc.tsx'
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	if (!data) return [{ title: 'Post Not Found | Michal Kolacz' }]
+
+	const { page, canonicalUrl } = data
+	const title = `${page.frontmatter.title} | Michal Kolacz`
+	const description = page.frontmatter.description
+
 	return [
-		{ title: `${data.page.frontmatter.title} | Michal Kolacz` },
-		{ name: 'description', content: data.page.frontmatter.description },
+		{ title },
+		{ name: 'description', content: description },
+		{ property: 'og:title', content: page.frontmatter.title },
+		{ property: 'og:description', content: description },
+		{ property: 'og:type', content: 'article' },
+		{ property: 'og:url', content: canonicalUrl },
+		{ property: 'article:published_time', content: page.frontmatter.date },
+		...(page.frontmatter.categories ?? []).map((tag: string) => ({
+			property: 'article:tag',
+			content: tag,
+		})),
+		{ name: 'twitter:card', content: 'summary' },
+		{ name: 'twitter:title', content: page.frontmatter.title },
+		{ name: 'twitter:description', content: description },
 	]
 }
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
 	const slug = params.slug
 	if (!slug) throw data('Not found', { status: 404 })
 
 	const page = await getMdxPage({ slug }, {})
 	if (!page) throw data('Not found', { status: 404 })
 
-	return { page }
+	const canonicalUrl = `${getDomainUrl(request)}/blog/${slug}`
+	return { page, canonicalUrl }
 }
 
 export default function BlogPost() {
