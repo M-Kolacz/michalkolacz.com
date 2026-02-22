@@ -1,5 +1,11 @@
-import { data, Link, useLoaderData, useNavigation } from 'react-router'
-import { type MetaFunction, type LoaderFunctionArgs } from 'react-router'
+import {
+	data,
+	Link,
+	useLoaderData,
+	useNavigation,
+	type MetaFunction,
+	type LoaderFunctionArgs,
+} from 'react-router'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { Skeleton } from '#app/components/ui/skeleton.tsx'
 import { getUserId } from '#app/utils/auth.server.ts'
