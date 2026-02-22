@@ -2,8 +2,20 @@ import { data, useLoaderData } from 'react-router'
 import { type MetaFunction, type LoaderFunctionArgs } from 'react-router'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { useMdxComponent } from '#app/utils/blog/mdx-components.tsx'
-import { getMdxPage } from '#app/utils/blog/mdx.server.ts'
+import { getBlogMdxListItems, getMdxPage } from '#app/utils/blog/mdx.server.ts'
+import { type SEOHandle } from '@nasa-gcn/remix-seo'
 import { getDomainUrl } from '#app/utils/misc.tsx'
+
+export const handle: SEOHandle = {
+	getSitemapEntries: async () => {
+		const posts = await getBlogMdxListItems({})
+		return posts.map((post) => ({
+			route: `/blog/${post.slug}`,
+			lastmod: new Date(post.frontmatter.date).toISOString(),
+			priority: 0.7 as const,
+		}))
+	},
+}
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	if (!data) return [{ title: 'Post Not Found | Michal Kolacz' }]
