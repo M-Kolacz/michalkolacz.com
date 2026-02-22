@@ -96,10 +96,10 @@ export async function getMdxDirList(options?: CachifiedOptions) {
 }
 
 export async function getBlogMdxListItems(
-	options: CachifiedOptions,
+	options: CachifiedOptions & { showDrafts?: boolean },
 ): Promise<Array<MdxListItem>> {
-	const { forceFresh, ttl = defaultTTL, timings } = options
-	const key = 'blog:mdx-list-items'
+	const { forceFresh, ttl = defaultTTL, timings, showDrafts = false } = options
+	const key = showDrafts ? 'blog:mdx-list-items:drafts' : 'blog:mdx-list-items'
 	return cachified({
 		cache,
 		timings,
@@ -109,7 +109,11 @@ export async function getBlogMdxListItems(
 		key,
 		getFreshValue: async () => {
 			let pages = await getMdxPagesInDirectory(options).then((allPosts) =>
-				allPosts.filter((p) => !p.frontmatter.draft && !p.frontmatter.unlisted),
+				allPosts.filter(
+					(p) =>
+						!p.frontmatter.unlisted &&
+						(showDrafts || !p.frontmatter.draft),
+				),
 			)
 
 			pages = pages.sort((a, z) => {
