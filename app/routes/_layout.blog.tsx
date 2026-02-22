@@ -42,7 +42,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		if (userId) {
 			const user = await prisma.user.findUnique({
 				where: { id: userId },
-				select: { roles: { select: { name: true } } },
+				include: { roles: { select: { name: true, permissions: true } } },
 			})
 			showDrafts = userHasRole(user, 'admin')
 		}

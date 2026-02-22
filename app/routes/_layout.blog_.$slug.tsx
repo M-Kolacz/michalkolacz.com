@@ -37,9 +37,7 @@ export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) => {
 		{ name: 'twitter:card', content: 'summary' },
 		{ name: 'twitter:title', content: page.frontmatter.title },
 		{ name: 'twitter:description', content: description },
-		...(isAdminDraftPreview
-			? [{ name: 'robots', content: 'noindex' }]
-			: []),
+		...(isAdminDraftPreview ? [{ name: 'robots', content: 'noindex' }] : []),
 	]
 }
 
@@ -56,16 +54,13 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 		if (userId) {
 			const user = await prisma.user.findUnique({
 				where: { id: userId },
-				select: { roles: { select: { name: true } } },
+				include: { roles: { select: { name: true, permissions: true } } },
 			})
 			isAdminDraftPreview = userHasRole(user, 'admin')
 		}
 	}
 
-	const page = await getMdxPage(
-		{ slug },
-		{ forceFresh: isAdminDraftPreview },
-	)
+	const page = await getMdxPage({ slug }, { forceFresh: isAdminDraftPreview })
 	if (!page) throw data('Not found', { status: 404 })
 
 	if (page.frontmatter.draft && !isAdminDraftPreview) {
