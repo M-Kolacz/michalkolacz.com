@@ -143,7 +143,7 @@ export const handlers: Array<HttpHandler> = [
 
 			const contentPath = Array.isArray(params.path)
 				? params.path.join('/')
-				: params.path
+				: String(params.path ?? '')
 			const localPath = path.join(process.cwd(), contentPath)
 
 			const exists = await fsExtra.pathExists(localPath)
@@ -186,7 +186,7 @@ export const handlers: Array<HttpHandler> = [
 		async ({ params }) => {
 			if (passthroughGitHubContent) return passthrough()
 
-			const sha = Array.isArray(params.sha) ? params.sha.join('/') : params.sha
+			const sha = Array.isArray(params.sha) ? params.sha.join('/') : String(params.sha ?? '')
 			const localPath = path.join(process.cwd(), sha)
 
 			const exists = await fsExtra.pathExists(localPath)
