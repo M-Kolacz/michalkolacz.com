@@ -329,3 +329,16 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+/* Shiki dual-theme: light inline, dark via CSS variables */
+.dark .shiki,
+.dark .shiki span {
+	color: var(--shiki-dark) !important;
+	background-color: var(--shiki-dark-bg) !important;
+}
+
+.shiki {
+	padding: 1.25rem;
+	border-radius: 0.5rem;
+	overflow-x: auto;
+}
