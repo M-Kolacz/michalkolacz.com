@@ -132,7 +132,76 @@ const passthroughGitHub =
 	!process.env.GITHUB_CLIENT_ID?.startsWith('MOCK_') &&
 	process.env.NODE_ENV !== 'test'
 
+const passthroughGitHubContent =
+	process.env.MOCKS !== 'true' && process.env.NODE_ENV !== 'test'
+
 export const handlers: Array<HttpHandler> = [
+	http.get(
+		'https://api.github.com/repos/:owner/:repo/contents/:path+',
+		async ({ params }) => {
+			if (passthroughGitHubContent) return passthrough()
+
+			const contentPath = Array.isArray(params.path)
+				? params.path.join('/')
+				: String(params.path ?? '')
+			const localPath = path.join(process.cwd(), contentPath)
+
+			const exists = await fsExtra.pathExists(localPath)
+			if (!exists) {
+				return new Response('Not Found', { status: 404 })
+			}
+
+			const stat = await fsExtra.stat(localPath)
+			if (stat.isDirectory()) {
+				const entries = await fsExtra.readdir(localPath, {
+					withFileTypes: true,
+				})
+				const contents = entries.map((entry) => {
+					const entryPath = `${contentPath}/${entry.name}`
+					return {
+						name: entry.name,
+						path: entryPath,
+						sha: entryPath,
+						type: entry.isDirectory() ? 'dir' : 'file',
+						size: 0,
+					}
+				})
+				return json(contents)
+			}
+
+			const content = await fsExtra.readFile(localPath)
+			return json({
+				name: path.basename(localPath),
+				path: contentPath,
+				sha: contentPath,
+				type: 'file',
+				content: content.toString('base64'),
+				encoding: 'base64',
+				size: content.length,
+			})
+		},
+	),
+	http.get(
+		'https://api.github.com/repos/:owner/:repo/git/blobs/:sha',
+		async ({ params }) => {
+			if (passthroughGitHubContent) return passthrough()
+
+			const sha = Array.isArray(params.sha) ? params.sha.join('/') : String(params.sha ?? '')
+			const localPath = path.join(process.cwd(), sha)
+
+			const exists = await fsExtra.pathExists(localPath)
+			if (!exists) {
+				return new Response('Not Found', { status: 404 })
+			}
+
+			const content = await fsExtra.readFile(localPath)
+			return json({
+				content: content.toString('base64'),
+				encoding: 'base64',
+				size: content.length,
+			})
+		},
+	),
 	http.post(
 		'https://github.com/login/oauth/access_token',
 		async ({ request }) => {
