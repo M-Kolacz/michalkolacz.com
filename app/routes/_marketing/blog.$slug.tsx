@@ -34,6 +34,7 @@ export default function BlogPostRoute({ loaderData }: Route.ComponentProps) {
 		year: 'numeric',
 		month: 'long',
 		day: 'numeric',
+		timeZone: 'UTC',
 	})
 
 	return (
