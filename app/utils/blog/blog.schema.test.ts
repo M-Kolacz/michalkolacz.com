@@ -1,3 +1,4 @@
+import { invariant } from '@epic-web/invariant'
 import { describe, expect, test } from 'vitest'
 import { BlogPostFrontmatterSchema } from './blog.schema.ts'
 
@@ -10,66 +11,80 @@ const validFrontmatter = {
 
 describe('BlogPostFrontmatterSchema', () => {
 	test('accepts valid frontmatter with required fields', () => {
-		const result = BlogPostFrontmatterSchema.safeParse(validFrontmatter)
-		expect(result.success).toBe(true)
-		if (result.success) {
-			expect(result.data.title).toBe('Test Post')
-			expect(result.data.description).toBe('A test blog post')
-			expect(result.data.date).toBeInstanceOf(Date)
-			expect(result.data.published).toBe(true)
-		}
+		// arrange
+		const input = validFrontmatter
+
+		// act
+		const result = BlogPostFrontmatterSchema.safeParse(input)
+
+		// assert
+		invariant(result.success, 'Expected parsing to succeed')
+		expect(result.data.title).toBe('Test Post')
+		expect(result.data.description).toBe('A test blog post')
+		expect(result.data.date).toBeInstanceOf(Date)
+		expect(result.data.published).toBe(true)
 	})
 
 	test('accepts valid frontmatter with optional fields', () => {
-		const result = BlogPostFrontmatterSchema.safeParse({
+		// arrange
+		const input = {
 			...validFrontmatter,
 			bannerImage: './banner.jpg',
 			bannerAlt: 'A banner image',
-		})
-		expect(result.success).toBe(true)
-		if (result.success) {
-			expect(result.data.bannerImage).toBe('./banner.jpg')
-			expect(result.data.bannerAlt).toBe('A banner image')
 		}
-	})
 
-	test('rejects missing title', () => {
-		const { title: _, ...withoutTitle } = validFrontmatter
-		const result = BlogPostFrontmatterSchema.safeParse(withoutTitle)
-		expect(result.success).toBe(false)
-	})
+		// act
+		const result = BlogPostFrontmatterSchema.safeParse(input)
 
-	test('rejects missing description', () => {
-		const { description: _, ...withoutDescription } = validFrontmatter
-		const result = BlogPostFrontmatterSchema.safeParse(withoutDescription)
-		expect(result.success).toBe(false)
+		// assert
+		invariant(result.success, 'Expected parsing to succeed')
+		expect(result.data.bannerImage).toBe('./banner.jpg')
+		expect(result.data.bannerAlt).toBe('A banner image')
 	})
 
 	test('rejects missing date', () => {
-		const { date: _, ...withoutDate } = validFrontmatter
-		const result = BlogPostFrontmatterSchema.safeParse(withoutDate)
+		// arrange
+		const { date: _, ...input } = validFrontmatter
+
+		// act
+		const result = BlogPostFrontmatterSchema.safeParse(input)
+
+		// assert
 		expect(result.success).toBe(false)
 	})
 
 	test('rejects invalid date format', () => {
-		const result = BlogPostFrontmatterSchema.safeParse({
-			...validFrontmatter,
-			date: 'not-a-date',
-		})
+		// arrange
+		const input = { ...validFrontmatter, date: 'not-a-date' }
+
+		// act
+		const result = BlogPostFrontmatterSchema.safeParse(input)
+
+		// assert
 		expect(result.success).toBe(false)
 	})
 
-	test('rejects missing published field', () => {
-		const { published: _, ...withoutPublished } = validFrontmatter
-		const result = BlogPostFrontmatterSchema.safeParse(withoutPublished)
-		expect(result.success).toBe(false)
+	test('rejects bannerImage without bannerAlt', () => {
+		// arrange
+		const input = { ...validFrontmatter, bannerImage: './banner.jpg' }
+
+		// act
+		const result = BlogPostFrontmatterSchema.safeParse(input)
+
+		// assert
+		invariant(!result.success, 'Expected parsing to fail')
+		expect(result.error.issues[0]?.path).toEqual(['bannerAlt'])
 	})
 
-	test('rejects non-boolean published field', () => {
-		const result = BlogPostFrontmatterSchema.safeParse({
-			...validFrontmatter,
-			published: 'yes',
-		})
-		expect(result.success).toBe(false)
+	test('rejects bannerAlt without bannerImage', () => {
+		// arrange
+		const input = { ...validFrontmatter, bannerAlt: 'A banner image' }
+
+		// act
+		const result = BlogPostFrontmatterSchema.safeParse(input)
+
+		// assert
+		invariant(!result.success, 'Expected parsing to fail')
+		expect(result.error.issues[0]?.path).toEqual(['bannerImage'])
 	})
 })

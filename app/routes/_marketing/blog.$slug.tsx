@@ -8,13 +8,10 @@ import { type Route } from './+types/blog.$slug.js'
 export async function loader({ params }: Route.LoaderArgs) {
 	const { slug } = params
 
-	let source: string
-	try {
-		source = await getPostContent(slug)
-	} catch (error) {
+	const source = await getPostContent(slug).catch((error) => {
 		console.error(error)
 		throw data(null, { status: 404 })
-	}
+	})
 
 	const post = await compileMdxPost(slug, source)
 

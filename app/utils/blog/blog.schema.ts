@@ -15,5 +15,9 @@ export const BlogPostFrontmatterSchema = z
 		message: 'bannerAlt is required when bannerImage is provided',
 		path: ['bannerAlt'],
 	})
+	.refine((data) => !data.bannerAlt || data.bannerImage, {
+		message: 'bannerImage is required when bannerAlt is provided',
+		path: ['bannerImage'],
+	})
 
 export type BlogPostFrontmatter = z.infer<typeof BlogPostFrontmatterSchema>

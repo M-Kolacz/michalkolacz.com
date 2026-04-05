@@ -6,13 +6,7 @@ const REPO_OWNER = 'M-Kolacz'
 const REPO_NAME = 'michalkolacz.com'
 const CONTENT_PATH = 'content/blog'
 
-function getOctokit() {
-	const token = process.env.GITHUB_TOKEN
-	if (!token) {
-		throw new Error('GITHUB_TOKEN environment variable is required')
-	}
-	return new Octokit({ auth: token })
-}
+const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
 
 export async function getPostContent(slug: string): Promise<string> {
 	const filePath = `${CONTENT_PATH}/${slug}/index.mdx`
@@ -21,7 +15,6 @@ export async function getPostContent(slug: string): Promise<string> {
 		return fs.readFile(path.join(process.cwd(), filePath), 'utf-8')
 	}
 
-	const octokit = getOctokit()
 
 	const { data } = await octokit.repos.getContent({
 		owner: REPO_OWNER,
