@@ -12,7 +12,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 	try {
 		source = await getPostContent(slug)
 	} catch (error) {
-		console.log(error)
+		console.error(error)
 		throw data(null, { status: 404 })
 	}
 
