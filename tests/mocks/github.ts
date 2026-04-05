@@ -132,6 +132,10 @@ const passthroughGitHub =
 	!process.env.GITHUB_CLIENT_ID?.startsWith('MOCK_') &&
 	process.env.NODE_ENV !== 'test'
 
+const passthroughGitHubToken =
+	!process.env.GITHUB_TOKEN?.startsWith('MOCK_') &&
+	process.env.NODE_ENV !== 'test'
+
 export const handlers: Array<HttpHandler> = [
 	http.post(
 		'https://github.com/login/oauth/access_token',
@@ -181,6 +185,27 @@ export const handlers: Array<HttpHandler> = [
 
 		return json(user.profile)
 	}),
+	http.get(
+		'https://api.github.com/repos/:owner/:repo/contents/:path',
+		async ({ params }) => {
+			if (passthroughGitHubToken) return passthrough()
+
+			const contentPath = decodeURIComponent(params.path as string)
+			const filePath = path.join(process.cwd(), contentPath)
+			const exists = await fsExtra.pathExists(filePath)
+			if (!exists) {
+				return new Response('Not Found', { status: 404 })
+			}
+
+			const content = await fsExtra.readFile(filePath, 'utf-8')
+			return json({
+				type: 'file',
+				content: Buffer.from(content).toString('base64'),
+				encoding: 'base64',
+				path: contentPath,
+			})
+		},
+	),
 	http.get('https://github.com/ghost.png', async () => {
 		if (passthroughGitHub) return passthrough()
 

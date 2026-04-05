@@ -1,5 +1,3 @@
-import fs from 'node:fs/promises'
-import path from 'node:path'
 import { Octokit } from '@octokit/rest'
 
 const REPO_OWNER = 'M-Kolacz'
@@ -10,11 +8,6 @@ const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })
 
 export async function getPostContent(slug: string): Promise<string> {
 	const filePath = `${CONTENT_PATH}/${slug}/index.mdx`
-
-	if (process.env.GITHUB_TOKEN?.startsWith('MOCK_')) {
-		return fs.readFile(path.join(process.cwd(), filePath), 'utf-8')
-	}
-
 
 	const { data } = await octokit.repos.getContent({
 		owner: REPO_OWNER,
