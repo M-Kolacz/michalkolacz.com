@@ -1,9 +1,9 @@
 import { getMDXComponent } from 'mdx-bundler/client'
 import { useMemo } from 'react'
 import { data } from 'react-router'
-import { type Route } from './+types/blog.$slug.js'
 import { getPostContent } from '#app/utils/blog/github.server.ts'
 import { compileMdxPost } from '#app/utils/blog/mdx.server.ts'
+import { type Route } from './+types/blog.$slug.js'
 
 export async function loader({ params }: Route.LoaderArgs) {
 	const { slug } = params
