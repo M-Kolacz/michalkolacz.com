@@ -328,3 +328,26 @@
 		@apply bg-background text-foreground;
 	}
 }
+
+/* Shiki syntax highlighting */
+.prose pre {
+	overflow-x: auto;
+	border-radius: var(--radius);
+}
+
+.prose pre > code {
+	display: block;
+	padding: 1rem 1.25rem;
+	font-size: 0.875rem;
+	line-height: 1.7;
+}
+
+/* Heading anchor links */
+.prose :is(h1, h2, h3, h4, h5, h6) > a {
+	text-decoration: none;
+	color: inherit;
+}
+
+.prose :is(h1, h2, h3, h4, h5, h6) > a:hover {
+	text-decoration: underline;
+}

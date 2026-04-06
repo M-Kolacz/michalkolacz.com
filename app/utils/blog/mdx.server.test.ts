@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { compileMdxPost } from './mdx.server.ts'
 
-describe('compileMdxPost', () => {
+describe('compileMdxPost', { timeout: 15_000 }, () => {
 	test('compiles valid MDX and returns correct metadata', async () => {
 		// arrange
 		const input = `---
@@ -83,6 +83,48 @@ ${words}
 		// assert
 		expect(result.readingTime).toMatch(/\d+ min read/)
 		expect(result.readingTime).not.toBe('1 min read')
+	})
+
+	test('compiles MDX with code blocks producing syntax-highlighted output', async () => {
+		// arrange
+		const input = `---
+title: "Code Test"
+description: "Testing code"
+date: "2026-04-05"
+published: true
+---
+
+\`\`\`typescript
+const x: number = 42
+\`\`\`
+`
+
+		// act
+		const result = await compileMdxPost('code-test', input)
+
+		// assert
+		expect(result.code).toMatch(/className:\"shiki/)
+	})
+
+	test('compiles MDX with heading anchor IDs', async () => {
+		// arrange
+		const input = `---
+title: "Heading Test"
+description: "Testing headings"
+date: "2026-04-05"
+published: true
+---
+
+## My Section
+
+Content here.
+`
+
+		// act
+		const result = await compileMdxPost('heading-test', input)
+
+		// assert
+		expect(result.code).toMatch(/#my-section/)
 	})
 
 	test('compiles MDX with GFM features', async () => {
