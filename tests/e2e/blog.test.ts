@@ -42,3 +42,28 @@ test('Blog post page displays banner image, title, date, and reading time', asyn
 
 	await expect(page.getByText(/min read/)).toBeVisible()
 })
+
+test('Blog post renders syntax-highlighted code blocks', async ({
+	page,
+	navigate,
+}) => {
+	await navigate('/blog/:slug', { slug: 'hello-world' })
+
+	const codeBlock = page.locator('pre.shiki')
+	await expect(codeBlock).toBeVisible()
+
+	// Shiki applies inline color styles via <span> elements
+	const highlightedSpan = codeBlock.locator('span[style]').first()
+	await expect(highlightedSpan).toBeVisible()
+})
+
+test('Blog post headings have anchor links', async ({ page, navigate }) => {
+	await navigate('/blog/:slug', { slug: 'hello-world' })
+
+	const heading = page.getByRole('heading', { name: 'Why I Started Writing' })
+	await expect(heading).toBeVisible()
+
+	// rehype-slug adds id, rehype-autolink-headings wraps content in <a>
+	const anchor = heading.locator('a')
+	await expect(anchor).toHaveAttribute('href', '#why-i-started-writing')
+})

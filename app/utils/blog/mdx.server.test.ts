@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { compileMdxPost } from './mdx.server.ts'
 
 describe('compileMdxPost', () => {
-	test('compiles valid MDX and returns correct metadata', async () => {
+	test('compiles valid MDX and returns correct metadata', { timeout: 15_000 }, async () => {
 		// arrange
 		const input = `---
 title: "Test Post"
@@ -83,6 +83,48 @@ ${words}
 		// assert
 		expect(result.readingTime).toMatch(/\d+ min read/)
 		expect(result.readingTime).not.toBe('1 min read')
+	})
+
+	test('compiles MDX with code blocks producing syntax-highlighted output', async () => {
+		// arrange
+		const input = `---
+title: "Code Test"
+description: "Testing code"
+date: "2026-04-05"
+published: true
+---
+
+\`\`\`typescript
+const x: number = 42
+\`\`\`
+`
+
+		// act
+		const result = await compileMdxPost('code-test', input)
+
+		// assert — Shiki wraps code in <pre> with inline styles for highlighting
+		expect(result.code).toContain('shiki')
+	})
+
+	test('compiles MDX with heading anchor IDs', async () => {
+		// arrange
+		const input = `---
+title: "Heading Test"
+description: "Testing headings"
+date: "2026-04-05"
+published: true
+---
+
+## My Section
+
+Content here.
+`
+
+		// act
+		const result = await compileMdxPost('heading-test', input)
+
+		// assert — rehype-slug adds id attributes, rehype-autolink-headings wraps in <a>
+		expect(result.code).toContain('my-section')
 	})
 
 	test('compiles MDX with GFM features', async () => {

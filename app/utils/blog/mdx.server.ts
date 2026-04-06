@@ -1,3 +1,6 @@
+import rehypeShiki from '@shikijs/rehype'
+import rehypeAutolinkHeadings from 'rehype-autolink-headings'
+import rehypeSlug from 'rehype-slug'
 import { bundleMDX } from 'mdx-bundler'
 import readingTime from 'reading-time'
 import remarkGfm from 'remark-gfm'
@@ -91,6 +94,12 @@ export async function compileMdxPost(
 		source,
 		mdxOptions(options) {
 			options.remarkPlugins = [...(options.remarkPlugins ?? []), remarkGfm]
+			options.rehypePlugins = [
+				...(options.rehypePlugins ?? []),
+				[rehypeShiki, { theme: 'github-dark' }],
+				rehypeSlug,
+				[rehypeAutolinkHeadings, { behavior: 'wrap' }],
+			]
 			return options
 		},
 	})
