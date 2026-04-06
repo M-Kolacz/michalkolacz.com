@@ -63,7 +63,7 @@ describe('compilationQueue', () => {
 		let maxRunning = 0
 
 		const task = () =>
-			compilationQueue.run(async () => {
+			compilationQueue(async () => {
 				running++
 				maxRunning = Math.max(maxRunning, running)
 				await new Promise((r) => setTimeout(r, 50))
@@ -80,7 +80,7 @@ describe('compilationQueue', () => {
 		const results: number[] = []
 
 		const tasks = Array.from({ length: 5 }, (_, i) =>
-			compilationQueue.run(async () => {
+			compilationQueue(async () => {
 				await new Promise((r) => setTimeout(r, 10))
 				results.push(i)
 				return i

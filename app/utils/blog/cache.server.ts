@@ -34,32 +34,27 @@ export const blogLruCache = {
 } satisfies Cache
 
 // Compilation queue — limits concurrent MDX compilations to prevent memory spikes
-class CompilationQueue {
-	#concurrency: number
-	#running = 0
-	#queue: Array<() => void> = []
+function createCompilationQueue(concurrency: number) {
+	let running = 0
+	const queue: Array<() => void> = []
 
-	constructor(concurrency: number) {
-		this.#concurrency = concurrency
-	}
-
-	async run<T>(fn: () => Promise<T>): Promise<T> {
-		if (this.#running >= this.#concurrency) {
-			await new Promise<void>((resolve) => this.#queue.push(resolve))
+	return async function run<T>(fn: () => Promise<T>): Promise<T> {
+		if (running >= concurrency) {
+			await new Promise<void>((resolve) => queue.push(resolve))
 		}
-		this.#running++
+		running++
 		try {
 			return await fn()
 		} finally {
-			this.#running--
-			this.#queue.shift()?.()
+			running--
+			queue.shift()?.()
 		}
 	}
 }
 
 export const compilationQueue = remember(
 	'blog-compilation-queue',
-	() => new CompilationQueue(2),
+	() => createCompilationQueue(2),
 )
 
 const POST_TTL = 1000 * 60 * 60 // 1 hour
@@ -77,7 +72,7 @@ export async function getCachedCompiledPost(
 		swr: POST_SWR,
 		async getFreshValue() {
 			const source = await getPostContent(slug)
-			return compilationQueue.run(() => compileMdxPost(slug, source))
+			return compilationQueue(() => compileMdxPost(slug, source))
 		},
 	})
 }
