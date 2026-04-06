@@ -39,6 +39,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 		allowlistedOrigins: [
 			getDomainUrl(request),
 			process.env.AWS_ENDPOINT_URL_S3,
+			'https://raw.githubusercontent.com',
 		].filter(Boolean),
 		cacheFolder: await getCacheDir(),
 		getImgSource: () => {

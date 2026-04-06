@@ -1,7 +1,7 @@
 import { Octokit } from '@octokit/rest'
 
-const REPO_OWNER = 'M-Kolacz'
-const REPO_NAME = 'michalkolacz.com'
+export const REPO_OWNER = 'M-Kolacz'
+export const REPO_NAME = 'michalkolacz.com'
 const CONTENT_PATH = 'content/blog'
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN })

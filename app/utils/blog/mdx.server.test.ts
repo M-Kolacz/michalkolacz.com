@@ -45,6 +45,46 @@ Content here.
 		)
 	})
 
+	test('short post returns 1 min read', async () => {
+		// arrange
+		const input = `---
+title: "Short"
+description: "Short post"
+date: "2026-04-05"
+published: true
+---
+
+A few words.
+`
+
+		// act
+		const result = await compileMdxPost('short', input)
+
+		// assert
+		expect(result.readingTime).toBe('1 min read')
+	})
+
+	test('longer post returns appropriate reading time', async () => {
+		// arrange — ~500 words at 200 wpm default = ~3 min read
+		const words = Array(500).fill('word').join(' ')
+		const input = `---
+title: "Long"
+description: "Long post"
+date: "2026-04-05"
+published: true
+---
+
+${words}
+`
+
+		// act
+		const result = await compileMdxPost('long', input)
+
+		// assert
+		expect(result.readingTime).toMatch(/\d+ min read/)
+		expect(result.readingTime).not.toBe('1 min read')
+	})
+
 	test('compiles MDX with GFM features', async () => {
 		// arrange
 		const input = `---
