@@ -124,7 +124,7 @@ Content here.
 		const result = await compileMdxPost('heading-test', input)
 
 		// assert
-		expect(result.code).toContain('my-section')
+		expect(result.code).toMatch(/id="my-section"/)
 	})
 
 	test('compiles MDX with GFM features', async () => {
