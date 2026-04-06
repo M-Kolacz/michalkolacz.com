@@ -31,25 +31,31 @@ describe('getCachedCompiledPost', { timeout: 15_000 }, () => {
 	})
 
 	test('returns cached result on second call', async () => {
+		// arrange
 		blogLruCache.delete('blog:post:cached-test')
 		mockedGetPostContent.mockResolvedValue(validSource)
 
+		// act
 		const first = await getCachedCompiledPost('cached-test')
 		const second = await getCachedCompiledPost('cached-test')
 
+		// assert
 		expect(first.frontmatter.title).toBe('Cached Post')
 		expect(second).toBe(first) // same reference = served from cache
 		expect(mockedGetPostContent).toHaveBeenCalledTimes(1)
 	})
 
 	test('recompiles after cache entry is deleted', async () => {
+		// arrange
 		blogLruCache.delete('blog:post:recompile-test')
 		mockedGetPostContent.mockResolvedValue(validSource)
 
+		// act
 		const first = await getCachedCompiledPost('recompile-test')
 		blogLruCache.delete('blog:post:recompile-test')
 		const second = await getCachedCompiledPost('recompile-test')
 
+		// assert
 		expect(first.frontmatter.title).toBe('Cached Post')
 		expect(second.frontmatter.title).toBe('Cached Post')
 		expect(second).not.toBe(first) // different reference = recompiled
@@ -59,9 +65,9 @@ describe('getCachedCompiledPost', { timeout: 15_000 }, () => {
 
 describe('compilationQueue', () => {
 	test('limits concurrent executions to 2', async () => {
+		// arrange
 		let running = 0
 		let maxRunning = 0
-
 		const task = () =>
 			compilationQueue(async () => {
 				running++
@@ -71,14 +77,16 @@ describe('compilationQueue', () => {
 				return maxRunning
 			})
 
+		// act
 		await Promise.all([task(), task(), task(), task()])
 
+		// assert
 		expect(maxRunning).toBeLessThanOrEqual(2)
 	})
 
 	test('all queued tasks complete', async () => {
+		// arrange
 		const results: number[] = []
-
 		const tasks = Array.from({ length: 5 }, (_, i) =>
 			compilationQueue(async () => {
 				await new Promise((r) => setTimeout(r, 10))
@@ -87,8 +95,10 @@ describe('compilationQueue', () => {
 			}),
 		)
 
+		// act
 		const returned = await Promise.all(tasks)
 
+		// assert
 		expect(returned).toEqual([0, 1, 2, 3, 4])
 		expect(results).toHaveLength(5)
 	})
