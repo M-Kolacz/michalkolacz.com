@@ -85,7 +85,6 @@ export default defineConfig((config) => ({
 					setupFiles: ['./tests/setup/setup-test-env.ts'],
 					globalSetup: ['./tests/setup/global-setup.ts'],
 					restoreMocks: true,
-					testTimeout: 15_000,
 					coverage: {
 						include: ['app/**/*.ts'],
 						all: true,

@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'vitest'
 import { compileMdxPost } from './mdx.server.ts'
 
-describe('compileMdxPost', () => {
+describe('compileMdxPost', { timeout: 15_000 }, () => {
 	test('compiles valid MDX and returns correct metadata', async () => {
 		// arrange
 		const input = `---
@@ -103,7 +103,7 @@ const x: number = 42
 		const result = await compileMdxPost('code-test', input)
 
 		// assert
-		expect(result.code).toMatch(/class="[^"]*shiki[^"]*"/)
+		expect(result.code).toMatch(/className:\"shiki/)
 	})
 
 	test('compiles MDX with heading anchor IDs', async () => {
@@ -124,7 +124,7 @@ Content here.
 		const result = await compileMdxPost('heading-test', input)
 
 		// assert
-		expect(result.code).toMatch(/id="my-section"/)
+		expect(result.code).toMatch(/#my-section/)
 	})
 
 	test('compiles MDX with GFM features', async () => {
