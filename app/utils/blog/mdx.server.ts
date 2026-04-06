@@ -1,11 +1,11 @@
 import { bundleMDX } from 'mdx-bundler'
 import readingTime from 'reading-time'
 import remarkGfm from 'remark-gfm'
-import { getPostContent, getPostSlugs } from './github.server.ts'
 import {
 	BlogPostFrontmatterSchema,
 	type BlogPostFrontmatter,
 } from './blog.schema.ts'
+import { getPostContent, getPostSlugs } from './github.server.ts'
 
 export type BlogPostListing = {
 	slug: string
@@ -42,7 +42,11 @@ export async function getPostListings(): Promise<BlogPostListing[]> {
 					description: result.data.description,
 					date: result.data.date.toISOString(),
 				}
-			} catch {
+			} catch (error) {
+				console.error(
+					`Failed to process blog post listing for slug "${slug}"`,
+					error,
+				)
 				return null
 			}
 		}),
