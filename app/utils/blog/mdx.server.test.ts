@@ -103,7 +103,7 @@ const x: number = 42
 		const result = await compileMdxPost('code-test', input)
 
 		// assert
-		expect(result.code).toContain('shiki')
+		expect(result.code).toMatch(/class="[^"]*shiki[^"]*"/)
 	})
 
 	test('compiles MDX with heading anchor IDs', async () => {
