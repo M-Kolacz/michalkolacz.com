@@ -197,6 +197,20 @@ export const handlers: Array<HttpHandler> = [
 				return new Response('Not Found', { status: 404 })
 			}
 
+			const stat = await fsExtra.stat(filePath)
+			if (stat.isDirectory()) {
+				const entries = await fsExtra.readdir(filePath, {
+					withFileTypes: true,
+				})
+				return json(
+					entries.map((entry) => ({
+						type: entry.isDirectory() ? 'dir' : 'file',
+						name: entry.name,
+						path: `${contentPath}/${entry.name}`,
+					})),
+				)
+			}
+
 			const content = await fsExtra.readFile(filePath, 'utf-8')
 			return json({
 				type: 'file',
