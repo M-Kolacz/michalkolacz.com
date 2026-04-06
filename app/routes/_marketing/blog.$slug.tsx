@@ -2,19 +2,17 @@ import { getMDXComponent } from 'mdx-bundler/client'
 import { Img } from 'openimg/react'
 import { useMemo } from 'react'
 import { data } from 'react-router'
-import { getPostContent } from '#app/utils/blog/github.server.ts'
-import { compileMdxPost, getBlogImageSrc } from '#app/utils/blog/mdx.server.ts'
+import { getCachedCompiledPost } from '#app/utils/blog/cache.server.ts'
+import { getBlogImageSrc } from '#app/utils/blog/mdx.server.ts'
 import { type Route } from './+types/blog.$slug.js'
 
 export async function loader({ params }: Route.LoaderArgs) {
 	const { slug } = params
 
-	const source = await getPostContent(slug).catch((error) => {
+	const post = await getCachedCompiledPost(slug).catch((error) => {
 		console.error(error)
 		throw data(null, { status: 404 })
 	})
-
-	const post = await compileMdxPost(slug, source)
 
 	return {
 		code: post.code,
