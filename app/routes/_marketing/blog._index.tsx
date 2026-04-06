@@ -1,10 +1,10 @@
 import { Img } from 'openimg/react'
 import { Link } from 'react-router'
-import { getPostListings } from '#app/utils/blog/mdx.server.ts'
+import { getCachedPostListings } from '#app/utils/blog/cache.server.ts'
 import { type Route } from './+types/blog._index.js'
 
 export async function loader() {
-	const posts = await getPostListings()
+	const posts = await getCachedPostListings()
 	return { posts }
 }
 
