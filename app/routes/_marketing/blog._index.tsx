@@ -3,6 +3,22 @@ import { Link } from 'react-router'
 import { getCachedPostListings } from '#app/utils/blog/cache.server.ts'
 import { type Route } from './+types/blog._index.js'
 
+export const meta: Route.MetaFunction = () => {
+	return [
+		{ title: 'Blog | Michal Kolacz' },
+		{
+			name: 'description',
+			content: 'Blog posts by Michal Kolacz about software engineering.',
+		},
+		{ property: 'og:title', content: 'Blog | Michal Kolacz' },
+		{
+			property: 'og:description',
+			content: 'Blog posts by Michal Kolacz about software engineering.',
+		},
+		{ property: 'og:type', content: 'website' },
+	]
+}
+
 export async function loader() {
 	const posts = await getCachedPostListings()
 	return { posts }

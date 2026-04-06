@@ -1,5 +1,56 @@
 import { expect, test } from '#tests/playwright-utils.ts'
 
+test('RSS feed returns valid XML with expected entries', async ({
+	page,
+	baseURL,
+}) => {
+	const response = await page.request.get(`${baseURL}blog/rss.xml`)
+
+	expect(response.status()).toBe(200)
+	expect(response.headers()['content-type']).toContain('application/rss+xml')
+
+	const body = await response.text()
+	expect(body).toContain('<?xml version="1.0"')
+	expect(body).toContain('<rss version="2.0"')
+	expect(body).toContain('<title>Michal Kolacz Blog</title>')
+	expect(body).toContain('<item>')
+	expect(body).toContain('Hello World: My First Blog Post')
+	expect(body).toContain('/blog/hello-world</link>')
+})
+
+test('Blog post page has correct OG meta tags', async ({ page, navigate }) => {
+	await navigate('/blog/:slug', { slug: 'hello-world' })
+
+	await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+		'content',
+		'Hello World: My First Blog Post',
+	)
+	await expect(
+		page.locator('meta[property="og:description"]'),
+	).toHaveAttribute('content', /Welcome to my blog/)
+	await expect(page.locator('meta[property="og:type"]')).toHaveAttribute(
+		'content',
+		'article',
+	)
+	await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+		'content',
+		/\/resources\/images/,
+	)
+})
+
+test('Blog listing page has OG meta tags', async ({ page, navigate }) => {
+	await navigate('/blog')
+
+	await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+		'content',
+		'Blog | Michal Kolacz',
+	)
+	await expect(page.locator('meta[property="og:type"]')).toHaveAttribute(
+		'content',
+		'website',
+	)
+})
+
 test('Blog listing page displays published posts', async ({
 	page,
 	navigate,

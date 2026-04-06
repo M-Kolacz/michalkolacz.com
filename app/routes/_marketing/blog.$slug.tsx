@@ -6,6 +6,29 @@ import { getCachedCompiledPost } from '#app/utils/blog/cache.server.ts'
 import { getBlogImageSrc } from '#app/utils/blog/mdx.server.ts'
 import { type Route } from './+types/blog.$slug.js'
 
+export const meta: Route.MetaFunction = ({ data, matches }) => {
+	const rootData = matches[0]?.data as
+		| { requestInfo: { origin: string } }
+		| undefined
+	const origin = rootData?.requestInfo.origin ?? ''
+
+	if (!data) {
+		return [{ title: 'Post Not Found' }]
+	}
+
+	const { frontmatter, bannerImage } = data
+	const ogImage = bannerImage ? `${origin}${bannerImage}` : null
+
+	return [
+		{ title: `${frontmatter.title} | Michal Kolacz` },
+		{ name: 'description', content: frontmatter.description },
+		{ property: 'og:title', content: frontmatter.title },
+		{ property: 'og:description', content: frontmatter.description },
+		{ property: 'og:type', content: 'article' },
+		...(ogImage ? [{ property: 'og:image', content: ogImage }] : []),
+	]
+}
+
 export async function loader({ params }: Route.LoaderArgs) {
 	const { slug } = params
 
