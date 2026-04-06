@@ -5,13 +5,26 @@ import {
 	BlogPostFrontmatterSchema,
 	type BlogPostFrontmatter,
 } from './blog.schema.ts'
-import { getPostContent, getPostSlugs } from './github.server.ts'
+import {
+	getPostContent,
+	getPostSlugs,
+	REPO_NAME,
+	REPO_OWNER,
+} from './github.server.ts'
+
+export function getBlogImageSrc(slug: string, imagePath: string): string {
+	const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/master/content/blog/${slug}/${imagePath}`
+	return `/resources/images?src=${encodeURIComponent(rawUrl)}`
+}
 
 export type BlogPostListing = {
 	slug: string
 	title: string
 	description: string
 	date: string
+	readingTime: string
+	bannerImage: string | null
+	bannerAlt: string | null
 }
 
 export async function getPostListings(): Promise<BlogPostListing[]> {
@@ -36,11 +49,18 @@ export async function getPostListings(): Promise<BlogPostListing[]> {
 				if (!result.success) return null
 				if (!result.data.published) return null
 
+				const stats = readingTime(source)
+
 				return {
 					slug,
 					title: result.data.title,
 					description: result.data.description,
 					date: result.data.date.toISOString(),
+					readingTime: stats.text,
+					bannerImage: result.data.bannerImage
+						? getBlogImageSrc(slug, result.data.bannerImage)
+						: null,
+					bannerAlt: result.data.bannerAlt ?? null,
 				}
 			} catch (error) {
 				console.error(

@@ -1,3 +1,4 @@
+import { Img } from 'openimg/react'
 import { Link } from 'react-router'
 import { getPostListings } from '#app/utils/blog/mdx.server.ts'
 import { type Route } from './+types/blog._index.js'
@@ -20,6 +21,15 @@ export default function BlogIndexRoute({ loaderData }: Route.ComponentProps) {
 					{posts.map((post) => (
 						<li key={post.slug}>
 							<Link to={`/blog/${post.slug}`} className="group block">
+								{post.bannerImage ? (
+									<Img
+										src={post.bannerImage}
+										alt={post.bannerAlt ?? ''}
+										className="mb-4 w-full rounded-lg object-cover"
+										width={768}
+										height={400}
+									/>
+								) : null}
 								<h2 className="text-h4 group-hover:underline">
 									{post.title}
 								</h2>
@@ -29,7 +39,8 @@ export default function BlogIndexRoute({ loaderData }: Route.ComponentProps) {
 										month: 'long',
 										day: 'numeric',
 										timeZone: 'UTC',
-									})}
+									})}{' '}
+									— {post.readingTime}
 								</p>
 								<p className="text-muted-foreground mt-2">
 									{post.description}

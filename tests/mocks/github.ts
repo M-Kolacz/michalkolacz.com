@@ -220,6 +220,34 @@ export const handlers: Array<HttpHandler> = [
 			})
 		},
 	),
+	http.get(
+		'https://raw.githubusercontent.com/:owner/:repo/:ref/*',
+		async ({ params }) => {
+			if (passthroughGitHubToken) return passthrough()
+
+			const filePath = path.join(
+				process.cwd(),
+				...(params['*'] as string).split('/'),
+			)
+			const exists = await fsExtra.pathExists(filePath)
+			if (!exists) {
+				return new Response('Not Found', { status: 404 })
+			}
+
+			const buffer = await fsExtra.readFile(filePath)
+			const ext = path.extname(filePath).toLowerCase()
+			const contentType =
+				ext === '.png'
+					? 'image/png'
+					: ext === '.jpg' || ext === '.jpeg'
+						? 'image/jpeg'
+						: 'application/octet-stream'
+
+			return new Response(buffer, {
+				headers: { 'content-type': contentType },
+			})
+		},
+	),
 	http.get('https://github.com/ghost.png', async () => {
 		if (passthroughGitHub) return passthrough()
 
