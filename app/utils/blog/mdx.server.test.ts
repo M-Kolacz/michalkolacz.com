@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { compileMdxPost } from './mdx.server.ts'
 
 describe('compileMdxPost', () => {
-	test('compiles valid MDX and returns correct metadata', { timeout: 15_000 }, async () => {
+	test('compiles valid MDX and returns correct metadata', async () => {
 		// arrange
 		const input = `---
 title: "Test Post"
@@ -102,7 +102,7 @@ const x: number = 42
 		// act
 		const result = await compileMdxPost('code-test', input)
 
-		// assert — Shiki wraps code in <pre> with inline styles for highlighting
+		// assert
 		expect(result.code).toContain('shiki')
 	})
 
@@ -123,7 +123,7 @@ Content here.
 		// act
 		const result = await compileMdxPost('heading-test', input)
 
-		// assert — rehype-slug adds id attributes, rehype-autolink-headings wraps in <a>
+		// assert
 		expect(result.code).toContain('my-section')
 	})
 
