@@ -27,7 +27,7 @@ test('Blog post page displays banner image, title, date, and reading time', asyn
 	page,
 	navigate,
 }) => {
-	await navigate('/blog/hello-world')
+	await navigate('/blog/:slug', { slug: 'hello-world' })
 
 	const bannerImg = page.getByRole('img', {
 		name: /A laptop on a desk with code on screen/,
