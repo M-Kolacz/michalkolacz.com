@@ -47,14 +47,14 @@ function createCompilationQueue(concurrency: number) {
 			return await fn()
 		} finally {
 			running--
-			queue.shift()?.()
+			const nextInQueue = queue.shift()
+			nextInQueue?.()
 		}
 	}
 }
 
-export const compilationQueue = remember(
-	'blog-compilation-queue',
-	() => createCompilationQueue(2),
+export const compilationQueue = remember('blog-compilation-queue', () =>
+	createCompilationQueue(2),
 )
 
 const POST_TTL = 1000 * 60 * 60 // 1 hour
