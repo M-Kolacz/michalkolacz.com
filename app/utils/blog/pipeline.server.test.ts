@@ -170,6 +170,64 @@ describe('createBlogPipeline', () => {
 	})
 
 	describe(
+		'invalidate',
+		{ timeout: 15_000 },
+		() => {
+			test('invalidate(slug) causes next getPost to recompile from source', async () => {
+				// arrange
+				let callCount = 0
+				const source: BlogContentSource = {
+					async getSlugs() {
+						return ['my-post']
+					},
+					async getContent() {
+						callCount++
+						return validMdx
+					},
+					getImageUrl: (slug, imagePath) => `/fake/${slug}/${imagePath}`,
+				}
+				const pipeline = createBlogPipeline(source)
+
+				// act — prime the cache, then invalidate, then fetch again
+				await pipeline.getPost('my-post')
+				expect(callCount).toBe(1)
+
+				pipeline.invalidate('my-post')
+				await pipeline.getPost('my-post')
+
+				// assert — source was called a second time after invalidation
+				expect(callCount).toBe(2)
+			})
+
+			test('invalidate() causes next getListings to refetch from source', async () => {
+				// arrange
+				let callCount = 0
+				const source: BlogContentSource = {
+					async getSlugs() {
+						callCount++
+						return ['my-post']
+					},
+					async getContent() {
+						return validMdx
+					},
+					getImageUrl: (slug, imagePath) => `/fake/${slug}/${imagePath}`,
+				}
+				const pipeline = createBlogPipeline(source)
+
+				// act — prime the cache, then invalidate, then fetch again
+				await pipeline.getListings()
+				expect(callCount).toBe(1)
+
+				pipeline.invalidate()
+				await pipeline.getListings()
+
+				// assert — source was called a second time after invalidation
+				expect(callCount).toBe(2)
+			})
+		},
+	)
+
+	describe(
 		'getListings',
 		{ timeout: 15_000 },
 		() => {

@@ -199,6 +199,14 @@ export function createBlogPipeline(source: BlogContentSource) {
 				},
 			})
 		},
+
+		invalidate(slug?: string): void {
+			if (slug !== undefined) {
+				cache.delete(`blog:post:${slug}`)
+			} else {
+				cache.delete('blog:listings')
+			}
+		},
 	}
 }
 
