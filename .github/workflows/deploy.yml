@@ -100,7 +100,7 @@ jobs:
         run: npx prisma migrate deploy && npx prisma generate --sql
 
       - name: ⚡ Run vitest
-        run: npm run test:coverage
+        run: npm run test
 
       - name: ⚡ Run vitest coverage
         run: npm run test:coverage

@@ -24,14 +24,12 @@ export async function setup() {
 		}
 	}
 
-	await execaCommand(
-		'npx prisma migrate reset --force --skip-seed --skip-generate',
-		{
-			stdio: 'inherit',
-			env: {
-				...process.env,
-				DATABASE_URL: `file:${BASE_DATABASE_PATH}`,
-			},
+	await execaCommand('npx prisma migrate reset --force && npm run db:seed', {
+		stdio: 'inherit',
+		env: {
+			...process.env,
+			DATABASE_URL: `file:${BASE_DATABASE_PATH}`,
+			DATABASE_PATH: BASE_DATABASE_PATH,
 		},
-	)
+	})
 }
