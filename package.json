@@ -27,6 +27,7 @@
     "typecheck": "react-router typegen && tsc",
     "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run",
     "storybook": "cross-env STORYBOOK=true storybook dev -p 6006",
+    "db:seed": "tsx prisma/seed.ts",
     "build-storybook": "cross-env STORYBOOK=true storybook build",
     "test:visual:build": "docker build -f Dockerfile.playwright -t michalkolacz.com-visual .",
     "test:visual": "npm run build-storybook && docker run --rm -v ./storybook-static:/app/storybook-static -v ./tests/__screenshots__:/app/tests/__screenshots__ michalkolacz.com-visual",

@@ -24,7 +24,7 @@ export async function setup() {
 		}
 	}
 
-	await execaCommand('npx prisma migrate reset --force', {
+	await execaCommand('npx prisma migrate reset --force && npm run db:seed', {
 		stdio: 'inherit',
 		env: {
 			...process.env,
