@@ -2,8 +2,7 @@ import { getMDXComponent } from 'mdx-bundler/client'
 import { Img } from 'openimg/react'
 import { useMemo } from 'react'
 import { data } from 'react-router'
-import { getCachedCompiledPost } from '#app/utils/blog/cache.server.ts'
-import { getBlogImageSrc } from '#app/utils/blog/mdx.server.ts'
+import { getBlog } from '#app/utils/blog/pipeline.server.ts'
 import { type Route } from './+types/blog.$slug.js'
 
 export const meta: Route.MetaFunction = ({ data, matches }) => {
@@ -31,24 +30,12 @@ export const meta: Route.MetaFunction = ({ data, matches }) => {
 
 export async function loader({ params }: Route.LoaderArgs) {
 	const { slug } = params
-
-	const post = await getCachedCompiledPost(slug).catch((error) => {
-		console.error(error)
-		throw data(null, { status: 404 })
-	})
-
-	return {
-		code: post.code,
-		frontmatter: {
-			...post.frontmatter,
-			date: post.frontmatter.date.toISOString(),
-		},
-		readingTime: post.readingTime,
-		bannerImage: post.frontmatter.bannerImage
-			? getBlogImageSrc(slug, post.frontmatter.bannerImage)
-			: null,
-		bannerAlt: post.frontmatter.bannerAlt ?? null,
-	}
+	return getBlog()
+		.getPost(slug)
+		.catch((error) => {
+			console.error(error)
+			throw data(null, { status: 404 })
+		})
 }
 
 export default function BlogPostRoute({ loaderData }: Route.ComponentProps) {
