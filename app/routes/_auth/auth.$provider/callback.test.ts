@@ -23,6 +23,7 @@ const LOADER_ARGS_BASE = {
 	params: PARAMS,
 	context: {} as AppLoadContext,
 	unstable_pattern: ROUTE_PATH,
+	unstable_url: new URL(ROUTE_PATH, BASE_URL),
 }
 
 afterEach(async () => {
@@ -239,8 +240,9 @@ test('if a user is not logged in, but the connection exists and they have enable
 
 async function setupRequest({
 	sessionId,
-	code = faker.string.uuid(),
-}: { sessionId?: string; code?: string } = {}) {
+	code: _code,
+}: { sessionId?: string; code?: string | null } = {}) {
+	const code = _code ?? faker.string.uuid()
 	const url = new URL(ROUTE_PATH, BASE_URL)
 	const state = faker.string.uuid()
 	url.searchParams.set('state', state)
