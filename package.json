@@ -32,13 +32,6 @@
     "test:visual:update": "npm run build-storybook && docker run --rm -v ./storybook-static:/app/storybook-static -v ./tests/__screenshots__:/app/tests/__screenshots__ michalkolacz.com-visual npx playwright test --config=playwright-visual.config.ts --update-snapshots",
     "test:visual:ci": "playwright test --config=playwright-visual.config.ts --update-snapshots"
   },
-  "prettier": "@epic-web/config/prettier",
-  "eslintIgnore": [
-    "/node_modules",
-    "/build",
-    "/public/build",
-    "/playwright-report"
-  ],
   "dependencies": {
     "@conform-to/react": "^1.16.0",
     "@conform-to/zod": "^1.16.0",
