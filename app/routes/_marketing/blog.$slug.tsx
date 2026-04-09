@@ -2,6 +2,7 @@ import { getMDXComponent } from 'mdx-bundler/client'
 import { Img } from 'openimg/react'
 import { useMemo } from 'react'
 import { data } from 'react-router'
+import { z } from 'zod'
 import { getBlog } from '#app/utils/blog/pipeline.server.ts'
 import { type Route } from './+types/blog.$slug.js'
 
@@ -28,8 +29,14 @@ export const meta: Route.MetaFunction = ({ data, matches }) => {
 	]
 }
 
+const SlugSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+
 export async function loader({ params }: Route.LoaderArgs) {
-	const { slug } = params
+	const parsed = SlugSchema.safeParse(params.slug)
+	if (!parsed.success) {
+		throw data(null, { status: 404 })
+	}
+	const slug = parsed.data
 	return getBlog()
 		.getPost(slug)
 		.catch((error) => {

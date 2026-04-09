@@ -1,4 +1,5 @@
 import { Octokit } from '@octokit/rest'
+import { z } from 'zod'
 import { type BlogContentSource } from './content-source.ts'
 
 const REPO_OWNER = 'M-Kolacz'
@@ -48,7 +49,23 @@ export function createGitHubContentSource(): BlogContentSource {
 		},
 
 		getImageUrl(slug, imagePath) {
-			const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/master/content/blog/${slug}/${imagePath}`
+			const ImagePathSchema = z
+				.string()
+				.transform((p) => p.split('/'))
+				.pipe(
+					z
+						.array(z.string().regex(/^[^#?]+$/).refine((s) => s !== '..' && s !== '.'))
+						.min(1),
+				)
+				.transform((segments) => segments.map(encodeURIComponent).join('/'))
+
+			const parsed = ImagePathSchema.safeParse(imagePath)
+			if (!parsed.success) {
+				throw new Error(`Invalid image path: ${imagePath}`)
+			}
+
+			const safePath = parsed.data
+			const rawUrl = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/master/content/blog/${slug}/${safePath}`
 			return `/resources/images?src=${encodeURIComponent(rawUrl)}`
 		},
 	}
