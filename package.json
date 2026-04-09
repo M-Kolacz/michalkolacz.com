@@ -219,9 +219,6 @@
   "engines": {
     "node": "^22.18.0"
   },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
-  },
   "epic-stack": {
     "head": "f533988e9e8cb61fe617049be88f7a1ce58fc725",
     "date": "2026-01-30T00:59:16Z"
