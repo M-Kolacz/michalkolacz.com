@@ -29,6 +29,7 @@ export async function setup() {
 		env: {
 			...process.env,
 			DATABASE_URL: `file:${BASE_DATABASE_PATH}`,
+			DATABASE_PATH: BASE_DATABASE_PATH,
 		},
 	})
 }
