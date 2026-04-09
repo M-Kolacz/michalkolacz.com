@@ -1,4 +1,5 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
+import { consoleError } from '#tests/setup/setup-test-env.ts'
 import { type BlogContentSource } from './content-source.ts'
 import { createBlogPipeline } from './pipeline.server.ts'
 
@@ -42,6 +43,26 @@ bannerAlt: "Hero image"
 ---
 
 Content here.
+`
+
+const unpublishedMdx = `---
+title: "Draft Post"
+description: "Not ready"
+date: "2026-04-05"
+published: false
+---
+
+Draft content.
+`
+
+const olderMdx = `---
+title: "Older Post"
+description: "An older post"
+date: "2026-01-01"
+published: true
+---
+
+Older content.
 `
 
 const invalidFrontmatterMdx = `---
@@ -147,4 +168,91 @@ describe('createBlogPipeline', () => {
 			)
 		})
 	})
+
+	describe(
+		'getListings',
+		{ timeout: 15_000 },
+		() => {
+			test('returns published posts sorted by date descending', async () => {
+				// arrange
+				const pipeline = createBlogPipeline(
+					createFakeSource({
+						'newer-post': validMdx, // date: 2026-04-05
+						'older-post': olderMdx, // date: 2026-01-01
+					}),
+				)
+
+				// act
+				const listings = await pipeline.getListings()
+
+				// assert
+				expect(listings).toHaveLength(2)
+				expect(listings[0]?.slug).toBe('newer-post')
+				expect(listings[1]?.slug).toBe('older-post')
+			})
+
+			test('silently filters posts with invalid frontmatter', async () => {
+				// arrange
+				consoleError.mockImplementation(() => {})
+				const pipeline = createBlogPipeline(
+					createFakeSource({
+						'good-post': validMdx,
+						'bad-post': invalidFrontmatterMdx,
+					}),
+				)
+
+				// act
+				const listings = await pipeline.getListings()
+
+				// assert
+				expect(listings).toHaveLength(1)
+				expect(listings[0]?.slug).toBe('good-post')
+			})
+
+			test('silently filters unpublished posts', async () => {
+				// arrange
+				const pipeline = createBlogPipeline(
+					createFakeSource({
+						'published-post': validMdx,
+						'draft-post': unpublishedMdx,
+					}),
+				)
+
+				// act
+				const listings = await pipeline.getListings()
+
+				// assert
+				expect(listings).toHaveLength(1)
+				expect(listings[0]?.slug).toBe('published-post')
+			})
+
+			test('resolves banner image URLs through the content source', async () => {
+				// arrange
+				const pipeline = createBlogPipeline(
+					createFakeSource({ 'banner-post': withBannerMdx }),
+				)
+
+				// act
+				const listings = await pipeline.getListings()
+
+				// assert
+				expect(listings[0]?.bannerImage).toBe('/fake/banner-post/hero.png')
+				expect(listings[0]?.bannerAlt).toBe('Hero image')
+			})
+
+			test('returns ISO date strings', async () => {
+				// arrange
+				const pipeline = createBlogPipeline(
+					createFakeSource({ 'test-post': validMdx }),
+				)
+
+				// act
+				const listings = await pipeline.getListings()
+
+				// assert
+				expect(typeof listings[0]?.date).toBe('string')
+				expect(listings[0]?.date).toBe('2026-04-05T00:00:00.000Z')
+			})
+		},
+	)
 })
