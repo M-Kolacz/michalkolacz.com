@@ -1,9 +1,9 @@
-import { getCachedPostListings } from '#app/utils/blog/cache.server.ts'
+import { getBlog } from '#app/utils/blog/pipeline.server.ts'
 import { getDomainUrl } from '#app/utils/misc.tsx'
 import { type Route } from './+types/blog.rss[.]xml.ts'
 
 export async function loader({ request }: Route.LoaderArgs) {
-	const posts = await getCachedPostListings()
+	const posts = await getBlog().getListings()
 	const domainUrl = getDomainUrl(request)
 	const blogUrl = `${domainUrl}/blog`
 	const feedUrl = `${domainUrl}/blog/rss.xml`

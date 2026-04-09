@@ -1,6 +1,6 @@
 import { Img } from 'openimg/react'
 import { Link } from 'react-router'
-import { getCachedPostListings } from '#app/utils/blog/cache.server.ts'
+import { getBlog } from '#app/utils/blog/pipeline.server.ts'
 import { type Route } from './+types/blog._index.js'
 
 export const meta: Route.MetaFunction = () => {
@@ -20,8 +20,7 @@ export const meta: Route.MetaFunction = () => {
 }
 
 export async function loader() {
-	const posts = await getCachedPostListings()
-	return { posts }
+	return { posts: await getBlog().getListings() }
 }
 
 export default function BlogIndexRoute({ loaderData }: Route.ComponentProps) {
