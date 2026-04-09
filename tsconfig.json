@@ -1,8 +1,16 @@
 {
 	"include": ["**/*.ts", "**/*.tsx", ".react-router/types/**/*", ".storybook/**/*.ts"],
-	"extends": ["@epic-web/config/typescript"],
 	"compilerOptions": {
-		// TODO: Probably should move this into epic-web/config
+		"isolatedModules": true,
+		"jsx": "react-jsx",
+		"module": "preserve",
+		"target": "ES2022",
+		"strict": true,
+		"skipLibCheck": true,
+		"allowImportingTsExtensions": true,
+		"noUncheckedIndexedAccess": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": true,
 		"types": ["@react-router/node", "vite/client"],
 		"rootDirs": [".", "./.react-router/types"],
 		"paths": {
