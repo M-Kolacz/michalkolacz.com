@@ -23,7 +23,6 @@ node_modules
 *.local.*
 
 # generated files
-/app/generated/prisma
 /app/components/ui/icons
 .react-router/
 /storybook-static

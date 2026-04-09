@@ -5,7 +5,8 @@
   "type": "module",
   "imports": {
     "#app/*": "./app/*",
-    "#tests/*": "./tests/*"
+    "#tests/*": "./tests/*",
+    "#prisma/*": "./prisma/*"
   },
   "scripts": {
     "build": "react-router build",
