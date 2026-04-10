@@ -12,11 +12,11 @@
     "node": "^22.18.0"
   },
   "lint-staged": {
-    "**/*.{ts,tsx}": [
+    "**/*.{ts,tsx,js,jsx}": [
       "prettier --write",
       "eslint --fix --max-warnings 0"
     ],
-    "**/*.{js,jsx,json,css,md,mdx,sql}": [
+    "**/*.{json,css,md,mdx,sql}": [
       "prettier --write"
     ]
   },
@@ -43,7 +43,7 @@
     "test:visual:build": "docker build -f tests/visual/Dockerfile -t michalkolacz.com-visual .",
     "test:visual": "npm run build-storybook && docker run --rm -v ./storybook-static:/app/storybook-static -v ./tests/visual/__screenshots__:/app/tests/visual/__screenshots__ michalkolacz.com-visual",
     "test:visual:update": "npm run build-storybook && docker run --rm -v ./storybook-static:/app/storybook-static -v ./tests/visual/__screenshots__:/app/tests/visual/__screenshots__ michalkolacz.com-visual npx playwright test --config=tests/visual/playwright.config.ts --update-snapshots",
-    "test:visual:ci": "playwright test --config=tests/visual/playwright.config.ts --update-snapshots",
+    "test:visual:ci": "playwright test --config=tests/visual/playwright.config.ts",
     "db:seed": "tsx prisma/seed.ts",
     "db:generate": "prisma generate --sql",
     "db:migrate:dev": "prisma migrate dev",
