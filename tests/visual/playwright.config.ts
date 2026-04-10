@@ -1,3 +1,5 @@
+import path from 'node:path'
+
 import { defineConfig } from '@playwright/test'
 
 const BASE_URL = process.env.TEST_BASE_URL || 'http://localhost:6006'
@@ -16,5 +18,6 @@ export default defineConfig({
 		command: 'npx http-server storybook-static -p 6006 --silent',
 		url: BASE_URL,
 		reuseExistingServer: !process.env.CI,
+		cwd: path.resolve(import.meta.dirname, '../..'),
 	},
 })
