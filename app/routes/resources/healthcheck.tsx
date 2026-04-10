@@ -2,22 +2,10 @@
 import { prisma } from '#app/utils/db.server.ts'
 import { type Route } from './+types/healthcheck.ts'
 
-export async function loader({ request }: Route.LoaderArgs) {
-	const host =
-		request.headers.get('X-Forwarded-Host') ?? request.headers.get('host')
-
+export async function loader(_: Route.LoaderArgs) {
 	try {
-		// if we can connect to the database and make a simple query
-		// and make a HEAD request to ourselves, then we're good.
-		await Promise.all([
-			prisma.user.count(),
-			fetch(`${new URL(request.url).protocol}${host}`, {
-				method: 'HEAD',
-				headers: { 'X-Healthcheck': 'true' },
-			}).then((r) => {
-				if (!r.ok) return Promise.reject(r)
-			}),
-		])
+		// if we can connect to the database and make a simple query, we're good.
+		await prisma.user.count()
 		return new Response('OK')
 	} catch (error: unknown) {
 		console.log('healthcheck ❌', { error })
