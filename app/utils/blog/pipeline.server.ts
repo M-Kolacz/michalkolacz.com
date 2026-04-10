@@ -1,6 +1,3 @@
-import rehypeShiki from '@shikijs/rehype'
-import rehypeAutolinkHeadings from 'rehype-autolink-headings'
-import rehypeSlug from 'rehype-slug'
 import {
 	cachified,
 	type CacheEntry,
@@ -8,9 +5,12 @@ import {
 	type Cache,
 } from '@epic-web/cachified'
 import { remember } from '@epic-web/remember'
-import { bundleMDX } from 'mdx-bundler'
+import rehypeShiki from '@shikijs/rehype'
 import { LRUCache } from 'lru-cache'
+import { bundleMDX } from 'mdx-bundler'
 import readingTime from 'reading-time'
+import rehypeAutolinkHeadings from 'rehype-autolink-headings'
+import rehypeSlug from 'rehype-slug'
 import remarkGfm from 'remark-gfm'
 import { BlogPostFrontmatterSchema } from './blog.schema.ts'
 import { type BlogContentSource } from './content-source.ts'
@@ -193,8 +193,7 @@ export function createBlogPipeline(source: BlogContentSource) {
 					return results
 						.filter((post): post is BlogPostListing => post !== null)
 						.sort(
-							(a, b) =>
-								new Date(b.date).getTime() - new Date(a.date).getTime(),
+							(a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
 						)
 				},
 			})

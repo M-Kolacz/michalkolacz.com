@@ -1,4 +1,4 @@
-import { test as base, type Response } from '@playwright/test'
+import { test as base, type Page, type Response } from '@playwright/test'
 import { href, type Register } from 'react-router'
 import * as setCookieParser from 'set-cookie-parser'
 import {
@@ -19,6 +19,10 @@ import {
 } from './mocks/github.ts'
 
 export * from './db-utils.ts'
+
+export function getMetaTag(page: Page, property: string) {
+	return page.locator(`meta[property="${property}"]`)
+}
 
 type GetOrInsertUserOptions = {
 	id?: string

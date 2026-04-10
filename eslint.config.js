@@ -1,3 +1,4 @@
+import vitest from '@vitest/eslint-plugin'
 import importPlugin from 'eslint-plugin-import-x'
 import jestDom from 'eslint-plugin-jest-dom'
 import playwright from 'eslint-plugin-playwright'
@@ -7,7 +8,6 @@ import storybook from 'eslint-plugin-storybook'
 import testingLibrary from 'eslint-plugin-testing-library'
 import globals from 'globals'
 import * as tseslint from 'typescript-eslint'
-import vitest from '@vitest/eslint-plugin'
 
 const ERROR = 'error'
 const WARN = 'warn'

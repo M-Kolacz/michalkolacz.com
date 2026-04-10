@@ -1,4 +1,4 @@
-import { expect, test } from '#tests/playwright-utils.ts'
+import { expect, getMetaTag, test } from '#tests/playwright-utils.ts'
 
 test('RSS feed returns valid XML with expected entries', async ({
 	page,
@@ -21,18 +21,19 @@ test('RSS feed returns valid XML with expected entries', async ({
 test('Blog post page has correct OG meta tags', async ({ page, navigate }) => {
 	await navigate('/blog/:slug', { slug: 'hello-world' })
 
-	await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+	await expect(getMetaTag(page, 'og:title')).toHaveAttribute(
 		'content',
 		'Hello World: My First Blog Post',
 	)
-	await expect(
-		page.locator('meta[property="og:description"]'),
-	).toHaveAttribute('content', /Welcome to my blog/)
-	await expect(page.locator('meta[property="og:type"]')).toHaveAttribute(
+	await expect(getMetaTag(page, 'og:description')).toHaveAttribute(
+		'content',
+		/Welcome to my blog/,
+	)
+	await expect(getMetaTag(page, 'og:type')).toHaveAttribute(
 		'content',
 		'article',
 	)
-	await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+	await expect(getMetaTag(page, 'og:image')).toHaveAttribute(
 		'content',
 		/\/resources\/images/,
 	)
@@ -41,11 +42,11 @@ test('Blog post page has correct OG meta tags', async ({ page, navigate }) => {
 test('Blog listing page has OG meta tags', async ({ page, navigate }) => {
 	await navigate('/blog')
 
-	await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+	await expect(getMetaTag(page, 'og:title')).toHaveAttribute(
 		'content',
 		'Blog | Michal Kolacz',
 	)
-	await expect(page.locator('meta[property="og:type"]')).toHaveAttribute(
+	await expect(getMetaTag(page, 'og:type')).toHaveAttribute(
 		'content',
 		'website',
 	)
@@ -100,10 +101,12 @@ test('Blog post renders syntax-highlighted code blocks', async ({
 }) => {
 	await navigate('/blog/:slug', { slug: 'hello-world' })
 
+	// eslint-disable-next-line playwright/no-raw-locators
 	const codeBlock = page.locator('pre.shiki')
 	await expect(codeBlock).toBeVisible()
 
 	// Shiki applies inline color styles via <span> elements
+	// eslint-disable-next-line playwright/no-raw-locators
 	const highlightedSpan = codeBlock.locator('span[style]').first()
 	await expect(highlightedSpan).toBeVisible()
 })
@@ -115,6 +118,6 @@ test('Blog post headings have anchor links', async ({ page, navigate }) => {
 	await expect(heading).toBeVisible()
 
 	// rehype-slug adds id, rehype-autolink-headings wraps content in <a>
-	const anchor = heading.locator('a')
+	const anchor = heading.getByRole('link')
 	await expect(anchor).toHaveAttribute('href', '#why-i-started-writing')
 })
