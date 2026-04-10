@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test'
 
-import { VIEWPORTS_DIMENSIONS } from '../.storybook/modes'
-import storybook from '../storybook-static/index.json' with { type: 'json' }
+import { VIEWPORTS_DIMENSIONS } from '../../.storybook/modes'
+import storybook from '../../storybook-static/index.json' with { type: 'json' }
 
 const stories = Object.values(storybook.entries).filter(
 	(entry) => entry.type === 'story',
