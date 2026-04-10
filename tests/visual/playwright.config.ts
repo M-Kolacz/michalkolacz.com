@@ -3,9 +3,9 @@ import { defineConfig } from '@playwright/test'
 const BASE_URL = process.env.TEST_BASE_URL || 'http://localhost:6006'
 
 export default defineConfig({
-	testDir: './tests',
+	testDir: '.',
 	testMatch: 'visual.spec.ts',
-	outputDir: './tests/__failed-snapshots__',
+	outputDir: './__failed-snapshots__',
 	fullyParallel: true,
 	snapshotPathTemplate: '{testDir}/__screenshots__/{arg}{ext}',
 	reporter: 'list',
