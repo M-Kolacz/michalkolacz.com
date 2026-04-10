@@ -1,0 +1,3 @@
+npx lint-staged
+npm run typecheck
+PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=yes npx vitest run --changed
