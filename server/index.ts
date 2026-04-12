@@ -41,6 +41,17 @@ app.use((req, res, next) => {
 	next()
 })
 
+// redirect www to non-www canonical domain
+app.use((req, res, next) => {
+	const host = getHost(req)
+	if (host.startsWith('www.')) {
+		const nonWwwHost = host.slice(4)
+		res.redirect(301, `https://${nonWwwHost}${req.originalUrl}`)
+		return
+	}
+	next()
+})
+
 // no ending slashes for SEO reasons
 // https://github.com/epicweb-dev/epic-stack/discussions/108
 app.get(/.*/, (req, res, next) => {
