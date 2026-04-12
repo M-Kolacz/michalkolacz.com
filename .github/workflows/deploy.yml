@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - master
-      - dev
   pull_request: {}
+  workflow_dispatch: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -202,7 +202,6 @@ jobs:
         with:
           name: failed-screenshots
           path: tests/visual/__failed-snapshots__/
-
   container:
     name: 📦 Prepare Container
     runs-on: ubuntu-24.04
@@ -252,11 +251,10 @@ jobs:
   deploy:
     name: 🚀 Deploy
     runs-on: ubuntu-24.04
-    needs: [lint, typecheck, vitest, playwright, container]
+    needs: [lint, typecheck, vitest, playwright,visual-tests,container]
     environment:
-      name: Dev
+      name: Production
       url: https://michalkolacz.com/
-    # only deploy on pushes
     if: ${{ github.event_name == 'push' }}
     steps:
       - name: ⬇️ Checkout repo
