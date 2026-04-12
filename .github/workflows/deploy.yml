@@ -255,7 +255,7 @@ jobs:
     needs: [lint, typecheck, vitest, playwright, container]
     environment:
       name: Dev
-      url: https://michalkolacz-com-5b79.fly.dev/
+      url: https://michalkolacz.com/
     # only deploy on pushes
     if: ${{ github.event_name == 'push' }}
     steps:
