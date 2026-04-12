@@ -222,20 +222,7 @@ jobs:
       - name: 🎈 Setup Fly
         uses: superfly/flyctl-actions/setup-flyctl@1.5
 
-      - name: 📦 Build Staging Container
-        if: ${{ github.ref == 'refs/heads/dev' }}
-        run: |
-          flyctl deploy \
-            --build-only \
-            --push \
-            --image-label ${{ github.sha }} \
-            --build-arg COMMIT_SHA=${{ github.sha }} \
-            --app ${{ steps.app_name.outputs.value }}-staging
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-
       - name: 📦 Build Production Container
-        if: ${{ github.ref == 'refs/heads/master' }}
         run: |
           flyctl deploy \
             --build-only \
@@ -272,7 +259,6 @@ jobs:
         uses: superfly/flyctl-actions/setup-flyctl@1.5
 
       - name: 🚀 Deploy Production
-        if: ${{ github.ref == 'refs/heads/master' }}
         run: |
           flyctl deploy \
             --image "registry.fly.io/${{ steps.app_name.outputs.value }}:${{ github.sha }}"
