@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import { getBlog } from '#app/utils/blog/pipeline.server.ts'
 import { useTranslation } from '#app/utils/i18n/react.tsx'
 import heroImage from '../assets/homepage-hero.jpg'
 import { type Route } from './+types/index.ts'
@@ -8,7 +9,6 @@ const LATEST_POSTS_LIMIT = 3
 export const meta: Route.MetaFunction = () => [{ title: 'Michal Kolacz' }]
 
 export async function loader() {
-	const { getBlog } = await import('#app/utils/blog/pipeline.server.ts')
 	const posts = await getBlog().getListings()
 	return { posts: posts.slice(0, LATEST_POSTS_LIMIT) }
 }
