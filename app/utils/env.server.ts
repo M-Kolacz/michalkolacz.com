@@ -22,6 +22,7 @@ const schema = z.object({
 
 	POSTHOG_TOKEN: z.string().optional(),
 	POSTHOG_HOST: z.string().url().optional(),
+	POSTHOG_ASSETS_HOST: z.string().url().optional(),
 
 	// Tigris Object Storage Configuration
 	AWS_ACCESS_KEY_ID: z.string(),
@@ -65,7 +66,6 @@ export function getEnv() {
 		SENTRY_DSN: process.env.SENTRY_DSN,
 		ALLOW_INDEXING: process.env.ALLOW_INDEXING,
 		POSTHOG_TOKEN: process.env.POSTHOG_TOKEN,
-		POSTHOG_HOST: process.env.POSTHOG_HOST,
 	}
 }
 
