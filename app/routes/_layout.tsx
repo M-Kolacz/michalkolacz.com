@@ -89,7 +89,7 @@ export default function AppLayout() {
 
 						<footer className="container flex items-center justify-between gap-4 pt-6 pb-5">
 							<p className="text-body-sm text-black dark:text-white">
-								© 2026 Michał Kołacz
+								© {new Date().getFullYear()} Michał Kołacz
 							</p>
 							<div className="flex items-center gap-6">
 								<a

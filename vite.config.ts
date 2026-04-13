@@ -56,7 +56,7 @@ export default defineConfig((config) => ({
 		IS_STORYBOOK ? null : reactRouterDevTools(),
 
 		iconsSpritesheet({
-			inputDir: './other/svg-icons',
+			inputDir: './app/components/ui/icons/svg-icons',
 			outputDir: './app/components/ui/icons',
 			fileName: 'sprite.svg',
 			withTypes: true,
