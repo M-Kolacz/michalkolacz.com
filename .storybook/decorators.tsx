@@ -1,5 +1,5 @@
 import { type Decorator } from '@storybook/react-vite'
-import { createRoutesStub } from 'react-router'
+import { createRoutesStub, type LoaderFunction } from 'react-router'
 import AppLayout from '../app/routes/_layout.tsx'
 
 const mockRootLoaderData = {
@@ -19,7 +19,8 @@ const mockRootLoaderData = {
 	},
 }
 
-export const withAppShell: Decorator = (Story) => {
+export const withAppShell: Decorator = (Story, context) => {
+	const childLoader = context.parameters?.loader as LoaderFunction | undefined
 	const Stub = createRoutesStub([
 		{
 			id: 'root',
@@ -30,6 +31,7 @@ export const withAppShell: Decorator = (Story) => {
 				{
 					index: true,
 					Component: Story,
+					loader: childLoader,
 				},
 			],
 		},
