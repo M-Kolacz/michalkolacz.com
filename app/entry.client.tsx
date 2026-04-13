@@ -6,7 +6,7 @@ if (ENV.MODE === 'production' && ENV.SENTRY_DSN) {
 	void import('./utils/monitoring.client.tsx').then(({ init }) => init())
 }
 
-if (ENV.MODE === 'production' && ENV.POSTHOG_KEY) {
+if (ENV.MODE === 'production' && ENV.POSTHOG_TOKEN) {
 	void import('./utils/analytics.client.ts').then(({ init }) => init())
 }
 
