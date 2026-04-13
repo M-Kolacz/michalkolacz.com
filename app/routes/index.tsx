@@ -30,7 +30,7 @@ export default function Index({ loaderData }: Route.ComponentProps) {
 				<img
 					src={heroImage}
 					alt={t('homepage.hero.imageAlt')}
-					className="w-full rounded-lg object-cover md:h-[320px] md:w-[320px] md:flex-none"
+					className="w-full rounded-lg object-cover md:h-80 md:w-80 md:flex-none"
 				/>
 			</section>
 
