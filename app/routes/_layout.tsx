@@ -1,5 +1,5 @@
 import { OpenImgContextProvider } from 'openimg/react'
-import { Outlet, useRouteLoaderData } from 'react-router'
+import { Link, Outlet, useRouteLoaderData } from 'react-router'
 import { HoneypotProvider } from 'remix-utils/honeypot/react'
 import { GeneralErrorBoundary } from '#app/components/error-boundary.tsx'
 import { EpicProgress } from '#app/components/progress-bar.tsx'
@@ -35,53 +35,74 @@ export default function AppLayout() {
 							<h1 className="text-h1 text-black dark:text-white">
 								Michal Kolacz
 							</h1>
-							<div className="flex items-center gap-4">
-								<a
-									href="https://github.com/M-Kolacz"
-									target="_blank"
-									rel="noopener noreferrer"
-									aria-label="GitHub"
+							<nav className="flex items-center gap-6">
+								<Link
+									to="/blog"
+									className="text-body-md font-medium text-black hover:underline dark:text-white"
 								>
-									<Icon
-										name="github-logo"
-										size="xl"
-										className="text-black dark:text-white"
-									/>
-								</a>
-								<a
-									href="https://x.com/M_Kolacz"
-									target="_blank"
-									rel="noopener noreferrer"
-									aria-label="Twitter"
-								>
-									<Icon
-										name="twitter-logo"
-										size="xl"
-										className="text-black dark:text-white"
-									/>
-								</a>
-								<a
-									href="https://www.linkedin.com/in/m-kolacz"
-									target="_blank"
-									rel="noopener noreferrer"
-									aria-label="LinkedIn"
-								>
-									<Icon
-										name="linkedin-logo"
-										size="xl"
-										className="text-black dark:text-white"
-									/>
-								</a>
-							</div>
+									Blog
+								</Link>
+								<div className="flex items-center gap-4">
+									<a
+										href="https://github.com/M-Kolacz"
+										target="_blank"
+										rel="noopener noreferrer"
+										aria-label="GitHub"
+									>
+										<Icon
+											name="github-logo"
+											size="xl"
+											className="text-black dark:text-white"
+										/>
+									</a>
+									<a
+										href="https://x.com/M_Kolacz"
+										target="_blank"
+										rel="noopener noreferrer"
+										aria-label="Twitter"
+									>
+										<Icon
+											name="twitter-logo"
+											size="xl"
+											className="text-black dark:text-white"
+										/>
+									</a>
+									<a
+										href="https://www.linkedin.com/in/m-kolacz"
+										target="_blank"
+										rel="noopener noreferrer"
+										aria-label="LinkedIn"
+									>
+										<Icon
+											name="linkedin-logo"
+											size="xl"
+											className="text-black dark:text-white"
+										/>
+									</a>
+								</div>
+							</nav>
 						</header>
 
 						<div className="flex flex-1 flex-col">
 							<Outlet />
 						</div>
 
-						<div className="container flex justify-between pb-5">
-							<ThemeSwitch userPreference={data?.requestInfo.userPrefs.theme} />
-						</div>
+						<footer className="container flex items-center justify-between gap-4 pt-6 pb-5">
+							<p className="text-body-sm text-black dark:text-white">
+								© 2026 Michał Kołacz
+							</p>
+							<div className="flex items-center gap-6">
+								<a
+									href="/blog/rss.xml"
+									className="text-body-sm font-medium text-black hover:underline dark:text-white"
+								>
+									RSS
+								</a>
+								<ThemeSwitch
+									userPreference={data?.requestInfo.userPrefs.theme}
+								/>
+							</div>
+						</footer>
 					</div>
 					<EpicToaster closeButton position="top-center" theme={theme} />
 					<EpicProgress />
