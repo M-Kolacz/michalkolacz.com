@@ -12,10 +12,16 @@ async function proxy(request: Request, splat: string) {
 	const target = new URL(`/${splat}${url.search}`, upstreamHost)
 
 	const headers = new Headers(request.headers)
-	headers.delete('host')
-	headers.delete('connection')
-	headers.delete('content-length')
-	headers.set('host', new URL(upstreamHost).host)
+	for (const header of [
+		'host',
+		'connection',
+		'content-length',
+		'cookie',
+		'authorization',
+		'x-csrf-token',
+	]) {
+		headers.delete(header)
+	}
 
 	const init: RequestInit = {
 		method: request.method,
