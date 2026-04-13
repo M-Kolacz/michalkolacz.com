@@ -2,8 +2,8 @@
 
 The Epic Stack uses SVG sprites for
 [optimal icon performance](https://benadam.me/thoughts/react-svg-sprites/).
-You'll find raw SVGs in the `./other/svg-icons` directory. These are then
-compiled into a sprite using the
+You'll find raw SVGs in the `./app/components/ui/icons/svg-icons` directory.
+These are then compiled into a sprite using the
 [`vite-plugin-icons-spritesheet`](https://github.com/jacobparis-insiders/vite-plugin-icons-spritesheet)
 plugin which generates the `app/components/ui/icons/sprite.svg` file and the
 accompanying `types.ts` file that allows Typescript to pick up the names of the
@@ -23,8 +23,8 @@ icons available in the `@radix-ui/icons` collection and let you select the ones
 you want to add.
 
 Sly has been configured in the Epic Stack to automatically add the icons to the
-`./other/svg-icons` directory, so there are no extra steps to take. You can see
-the configuration in the `./other/sly/sly.json` file.
+`./app/components/ui/icons/svg-icons` directory, so there are no extra steps to
+take. You can see the configuration in the `./other/sly/sly.json` file.
 
 The SVGs used by default in the Epic Stack come from
 [icons.radix-ui.com](https://icons.radix-ui.com/). You can download additional

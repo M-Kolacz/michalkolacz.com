@@ -23,7 +23,6 @@ node_modules
 *.local.*
 
 # generated files
-/app/components/ui/icons
 .react-router/
 /storybook-static
 test-report.junit.xml
