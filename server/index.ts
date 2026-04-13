@@ -69,69 +69,6 @@ app.use(compression())
 // http://expressjs.com/en/advanced/best-practice-security.html#at-a-minimum-disable-x-powered-by-header
 app.disable('x-powered-by')
 
-const POSTHOG_HOST = process.env.POSTHOG_HOST ?? 'https://eu.i.posthog.com'
-const POSTHOG_ASSETS_HOST =
-	process.env.POSTHOG_ASSETS_HOST ?? 'https://eu-assets.i.posthog.com'
-
-app.use(
-	'/ingest',
-	express.raw({ type: '*/*', limit: '2mb' }),
-	async (req, res) => {
-		const upstreamHost = req.path.startsWith('/static/')
-			? POSTHOG_ASSETS_HOST
-			: POSTHOG_HOST
-		const target = new URL(
-			req.originalUrl.replace(/^\/ingest/, ''),
-			upstreamHost,
-		)
-
-		const headers = new Headers()
-		for (const [key, value] of Object.entries(req.headers)) {
-			if (value === undefined) continue
-			const lower = key.toLowerCase()
-			if (
-				lower === 'host' ||
-				lower === 'connection' ||
-				lower === 'content-length'
-			) {
-				continue
-			}
-			headers.set(key, Array.isArray(value) ? value.join(', ') : value)
-		}
-		headers.set('host', new URL(upstreamHost).host)
-
-		const hasBody = req.method !== 'GET' && req.method !== 'HEAD'
-		try {
-			const upstream = await fetch(target, {
-				method: req.method,
-				headers,
-				body:
-					hasBody && Buffer.isBuffer(req.body)
-						? new Uint8Array(req.body)
-						: undefined,
-			})
-			res.status(upstream.status)
-			upstream.headers.forEach((value, key) => {
-				const lower = key.toLowerCase()
-				if (
-					lower === 'content-encoding' ||
-					lower === 'content-length' ||
-					lower === 'transfer-encoding' ||
-					lower === 'connection'
-				) {
-					return
-				}
-				res.setHeader(key, value)
-			})
-			const buffer = Buffer.from(await upstream.arrayBuffer())
-			res.end(buffer)
-		} catch (error) {
-			console.error('PostHog proxy error', error)
-			res.status(502).send('Bad Gateway')
-		}
-	},
-)
-
 app.use((_, res, next) => {
 	// The referrerPolicy breaks our redirectTo logic
 	helmet(res, { general: { referrerPolicy: false } })
