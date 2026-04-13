@@ -4,8 +4,8 @@ import Homepage from './index.tsx'
 const meta: Meta<typeof Homepage> = {
 	title: 'Pages/Homepage',
 	component: Homepage,
-	parameters: {
-		loader: () => ({
+	args: {
+		loaderData: {
 			posts: [
 				{
 					slug: 'visual-regression-testing',
@@ -18,7 +18,7 @@ const meta: Meta<typeof Homepage> = {
 					bannerAlt: null,
 				},
 			],
-		}),
+		},
 	},
 }
 
@@ -28,7 +28,9 @@ type Story = StoryObj<typeof Homepage>
 export const Default: Story = {}
 
 export const Empty: Story = {
-	parameters: {
-		loader: () => ({ posts: [] }),
+	args: {
+		loaderData: {
+			posts: [],
+		},
 	},
 }
