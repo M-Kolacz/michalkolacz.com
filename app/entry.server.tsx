@@ -74,6 +74,7 @@ export default async function handleRequest(...args: DocRequestArgs) {
 									'connect-src': [
 										MODE === 'development' ? 'ws:' : undefined,
 										process.env.SENTRY_DSN ? '*.sentry.io' : undefined,
+										process.env.POSTHOG_KEY ? '*.i.posthog.com' : undefined,
 										"'self'",
 									],
 									'font-src': ["'self'"],
@@ -82,6 +83,7 @@ export default async function handleRequest(...args: DocRequestArgs) {
 									'script-src': [
 										"'strict-dynamic'",
 										"'self'",
+										process.env.POSTHOG_KEY ? '*.i.posthog.com' : undefined,
 										`'nonce-${nonce}'`,
 									],
 									'script-src-attr': [`'nonce-${nonce}'`],
