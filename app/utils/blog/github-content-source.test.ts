@@ -15,7 +15,7 @@ describe('createGitHubContentSource', () => {
 
 			// assert
 			expect(Array.isArray(slugs)).toBe(true)
-			expect(slugs).toContain('hello-world')
+			expect(slugs).toContain('visual-regression-testing')
 			expect(slugs.every((s) => typeof s === 'string')).toBe(true)
 		})
 
@@ -37,12 +37,12 @@ describe('createGitHubContentSource', () => {
 			const source = createGitHubContentSource()
 
 			// act
-			const content = await source.getContent('hello-world')
+			const content = await source.getContent('visual-regression-testing')
 
 			// assert
 			expect(typeof content).toBe('string')
 			expect(content.length).toBeGreaterThan(0)
-			expect(content).toContain('Hello World')
+			expect(content).toContain('Visual Regression Testing')
 		})
 
 		test('returned content is valid UTF-8 text, not raw base64', async () => {
@@ -50,7 +50,7 @@ describe('createGitHubContentSource', () => {
 			const source = createGitHubContentSource()
 
 			// act
-			const content = await source.getContent('hello-world')
+			const content = await source.getContent('visual-regression-testing')
 
 			// assert — base64 strings don't contain MDX front-matter dashes
 			expect(content).toMatch(/^---/)
@@ -71,7 +71,7 @@ describe('createGitHubContentSource', () => {
 			const source = createGitHubContentSource()
 
 			// act
-			const url = source.getImageUrl('hello-world', 'img.png')
+			const url = source.getImageUrl('visual-regression-testing', 'img.png')
 
 			// assert
 			expect(url).toMatch(/^\/resources\/images\?src=/)
@@ -82,14 +82,14 @@ describe('createGitHubContentSource', () => {
 			const source = createGitHubContentSource()
 
 			// act
-			const url = source.getImageUrl('hello-world', 'img.png')
-			const src = new URLSearchParams(url.replace('/resources/images?', '')).get(
-				'src',
-			)
+			const url = source.getImageUrl('visual-regression-testing', 'img.png')
+			const src = new URLSearchParams(
+				url.replace('/resources/images?', ''),
+			).get('src')
 
 			// assert
 			expect(src).toBe(
-				'https://raw.githubusercontent.com/M-Kolacz/michalkolacz.com/master/content/blog/hello-world/img.png',
+				'https://raw.githubusercontent.com/M-Kolacz/michalkolacz.com/master/content/blog/visual-regression-testing/img.png',
 			)
 		})
 
@@ -98,10 +98,13 @@ describe('createGitHubContentSource', () => {
 			const source = createGitHubContentSource()
 
 			// act
-			const url = source.getImageUrl('hello-world', 'images/hero.jpg')
-			const src = new URLSearchParams(url.replace('/resources/images?', '')).get(
-				'src',
+			const url = source.getImageUrl(
+				'visual-regression-testing',
+				'images/hero.jpg',
 			)
+			const src = new URLSearchParams(
+				url.replace('/resources/images?', ''),
+			).get('src')
 
 			// assert
 			expect(src).toContain('images/hero.jpg')

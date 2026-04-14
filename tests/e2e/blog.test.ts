@@ -14,20 +14,22 @@ test('RSS feed returns valid XML with expected entries', async ({
 	expect(body).toContain('<rss version="2.0"')
 	expect(body).toContain('<title>Michal Kolacz Blog</title>')
 	expect(body).toContain('<item>')
-	expect(body).toContain('Hello World: My First Blog Post')
-	expect(body).toContain('/blog/hello-world</link>')
+	expect(body).toContain(
+		'Visual Regression Testing with Storybook, Playwright, and Docker',
+	)
+	expect(body).toContain('/blog/visual-regression-testing</link>')
 })
 
 test('Blog post page has correct OG meta tags', async ({ page, navigate }) => {
-	await navigate('/blog/:slug', { slug: 'hello-world' })
+	await navigate('/blog/:slug', { slug: 'visual-regression-testing' })
 
 	await expect(getMetaTag(page, 'og:title')).toHaveAttribute(
 		'content',
-		'Hello World: My First Blog Post',
+		'Visual Regression Testing with Storybook, Playwright, and Docker',
 	)
 	await expect(getMetaTag(page, 'og:description')).toHaveAttribute(
 		'content',
-		/Welcome to my blog/,
+		/unintended UI changes/,
 	)
 	await expect(getMetaTag(page, 'og:type')).toHaveAttribute(
 		'content',
@@ -61,17 +63,19 @@ test('Blog listing page displays published posts', async ({
 	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Blog')
 
 	const postLink = page.getByRole('link', {
-		name: /Hello World: My First Blog Post/,
+		name: /Visual Regression Testing with Storybook, Playwright, and Docker/,
 	})
 	await expect(postLink).toBeVisible()
 
-	await expect(postLink).toContainText('April 5, 2026')
-	await expect(postLink).toContainText('Welcome to my blog! In this first post')
+	await expect(postLink).toContainText('April 14, 2026')
+	await expect(postLink).toContainText('How I catch unintended UI changes')
 
 	await postLink.click()
-	await expect(page).toHaveURL(/\/blog\/hello-world$/)
+	await expect(page).toHaveURL(/\/blog\/visual-regression-testing$/)
 	await expect(
-		page.getByRole('heading', { name: /Hello World: My First Blog Post/ }),
+		page.getByRole('heading', {
+			name: /Visual Regression Testing with Storybook, Playwright, and Docker/,
+		}),
 	).toBeVisible()
 })
 
@@ -79,7 +83,7 @@ test('Blog post page displays banner image, title, date, and reading time', asyn
 	page,
 	navigate,
 }) => {
-	await navigate('/blog/:slug', { slug: 'hello-world' })
+	await navigate('/blog/:slug', { slug: 'visual-regression-testing' })
 
 	const bannerImg = page.getByRole('img', {
 		name: /A laptop on a desk with code on screen/,
@@ -87,10 +91,12 @@ test('Blog post page displays banner image, title, date, and reading time', asyn
 	await expect(bannerImg).toBeVisible()
 
 	await expect(
-		page.getByRole('heading', { name: /Hello World: My First Blog Post/ }),
+		page.getByRole('heading', {
+			name: /Visual Regression Testing with Storybook, Playwright, and Docker/,
+		}),
 	).toBeVisible()
 
-	await expect(page.getByText('April 5, 2026')).toBeVisible()
+	await expect(page.getByText('April 14, 2026')).toBeVisible()
 
 	await expect(page.getByText(/min read/)).toBeVisible()
 })
@@ -99,7 +105,7 @@ test('Blog post renders syntax-highlighted code blocks', async ({
 	page,
 	navigate,
 }) => {
-	await navigate('/blog/:slug', { slug: 'hello-world' })
+	await navigate('/blog/:slug', { slug: 'visual-regression-testing' })
 
 	// eslint-disable-next-line playwright/no-raw-locators
 	const codeBlock = page.locator('pre.shiki')
@@ -112,12 +118,14 @@ test('Blog post renders syntax-highlighted code blocks', async ({
 })
 
 test('Blog post headings have anchor links', async ({ page, navigate }) => {
-	await navigate('/blog/:slug', { slug: 'hello-world' })
+	await navigate('/blog/:slug', { slug: 'visual-regression-testing' })
 
-	const heading = page.getByRole('heading', { name: 'Why I Started Writing' })
+	const heading = page.getByRole('heading', {
+		name: 'The Problem with UI Changes',
+	})
 	await expect(heading).toBeVisible()
 
 	// rehype-slug adds id, rehype-autolink-headings wraps content in <a>
 	const anchor = heading.getByRole('link')
-	await expect(anchor).toHaveAttribute('href', '#why-i-started-writing')
+	await expect(anchor).toHaveAttribute('href', '#the-problem-with-ui-changes')
 })
