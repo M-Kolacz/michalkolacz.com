@@ -108,7 +108,7 @@ test('Blog post renders syntax-highlighted code blocks', async ({
 	await navigate('/blog/:slug', { slug: 'visual-regression-testing' })
 
 	// eslint-disable-next-line playwright/no-raw-locators
-	const codeBlock = page.locator('pre.shiki')
+	const codeBlock = page.locator('pre.shiki').first()
 	await expect(codeBlock).toBeVisible()
 
 	// Shiki applies inline color styles via <span> elements
