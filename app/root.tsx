@@ -1,3 +1,4 @@
+import { OpenImgContextProvider } from 'openimg/react'
 import {
 	data,
 	Links,
@@ -22,7 +23,7 @@ import { getEnv } from './utils/env.server.ts'
 import { pipeHeaders } from './utils/headers.server.ts'
 import { honeypot } from './utils/honeypot.server.ts'
 import type en from './utils/i18n/translations/en.ts'
-import { combineHeaders, getDomainUrl } from './utils/misc.tsx'
+import { combineHeaders, getDomainUrl, getImgSrc } from './utils/misc.tsx'
 import { useNonce } from './utils/nonce-provider.ts'
 import { type Theme, getTheme } from './utils/theme.server.ts'
 import { makeTimings, time } from './utils/timing.server.ts'
@@ -174,7 +175,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function App() {
-	return <Outlet />
+	return (
+		<OpenImgContextProvider
+			optimizerEndpoint="/resources/images"
+			getSrc={getImgSrc}
+		>
+			<Outlet />
+		</OpenImgContextProvider>
+	)
 }
 
 export default App

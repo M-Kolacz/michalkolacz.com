@@ -225,10 +225,9 @@ export const handlers: Array<HttpHandler> = [
 		async ({ params }) => {
 			if (passthroughGitHubToken) return passthrough()
 
-			const filePath = path.join(
-				process.cwd(),
-				...(params['*'] as string).split('/'),
-			)
+			// MSW exposes unnamed wildcards as the positional key "0".
+			const rest = (params['*'] ?? params['0']) as string
+			const filePath = path.join(process.cwd(), ...rest.split('/'))
 			const exists = await fsExtra.pathExists(filePath)
 			if (!exists) {
 				return new Response('Not Found', { status: 404 })
