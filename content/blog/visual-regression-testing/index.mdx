@@ -1,0 +1,131 @@
+---
+title: 'Visual Regression Testing with Storybook, Playwright, and Docker'
+description: 'How I catch unintended UI changes on this site using Storybook stories, Playwright screenshots, and a Docker sandbox that makes snapshots reproducible across machines.'
+date: '2026-04-14'
+published: true
+bannerImage: 'img.png'
+bannerAlt: 'A laptop on a desk with code on screen'
+---
+
+## The Problem with UI Changes
+
+Unit tests are great at telling you that a function still returns the right number. They are terrible at telling you that a button still _looks_ like a button.
+
+Most UI regressions are not logic bugs. They are a tweaked Tailwind class, a font stack that fell back, a flexbox rule that pushed an icon one pixel to the left. Every one of these is invisible to `expect(value).toBe(...)` — but the moment a real person loads the page, they see it.
+
+**Visual Regression Testing** (VRT) fixes this by comparing actual pixels. You take a screenshot of a component, commit it to the repo as a baseline, and on every future run you compare against it. If pixels drift, the test fails.
+
+## Why Storybook + Playwright + Docker
+
+There are three problems you have to solve before VRT becomes useful:
+
+1. **What to screenshot.** You need each component rendered in isolation, in a state you control.
+2. **How to screenshot it.** You need a headless browser that drives real rendering.
+3. **Where to screenshot it.** Fonts, sub-pixel anti-aliasing, and GPU rasterization all differ between machines. A baseline taken on my laptop will fail on yours.
+
+Each piece of the stack solves one of these problems:
+
+| Tool       | Category              | Role in VRT                                       |
+| ---------- | --------------------- | ------------------------------------------------- |
+| Storybook  | Component workshop    | Renders each component in a fixed, isolated state |
+| Playwright | Browser automation    | Navigates to stories and captures screenshots     |
+| Docker     | Sandboxed environment | Makes the render identical on every machine       |
+
+Storybook tells you _what_ to shoot, Playwright tells you _how_, and Docker tells you _where_ — in a container that looks the same on my laptop, your laptop, and CI.
+
+## How It Works on This Site
+
+This blog is where I dog-food all of this. Every component has a `.stories.tsx` file, and a single Playwright test iterates over every story and takes a screenshot.
+
+The whole setup is about fifty lines of configuration. Here is the heart of it:
+
+```ts
+import { expect, test } from '@playwright/test'
+import storybook from '../../storybook-static/index.json' with { type: 'json' }
+
+const stories = Object.values(storybook.entries).filter(
+	(entry) => entry.type === 'story',
+)
+
+for (const story of stories) {
+	test(`${story.title} ${story.name} should not have visual regressions`, async ({
+		page,
+	}) => {
+		const params = new URLSearchParams({ id: story.id, viewMode: 'story' })
+		await page.goto(`/iframe.html?${params.toString()}`)
+		await page.waitForSelector('#storybook-root')
+
+		await expect(page).toHaveScreenshot(
+			[
+				...story.title.toLowerCase().split('/'),
+				`${story.name.toLowerCase().replace(' ', '-')}.png`,
+			],
+			{ fullPage: true, animations: 'disabled', maxDiffPixelRatio: 0.005 },
+		)
+	})
+}
+```
+
+A few details worth pointing out:
+
+- **`storybook-static/index.json`** is produced by `npm run build-storybook`. It contains every story id, so the test suite automatically grows as I add stories — no hand-maintained list.
+- **`animations: 'disabled'`** freezes CSS animations, otherwise a shimmer or fade would fail the diff randomly.
+- **`maxDiffPixelRatio: 0.005`** gives a tiny tolerance (0.5% of pixels) for sub-pixel noise that slips past even Docker.
+
+## The Docker Layer
+
+Here is where most VRT setups fall over. If I take a baseline on macOS and you run the test on Linux, fonts render differently and every single screenshot fails. The fix is to never take screenshots on the host. Always take them inside the same Linux container.
+
+The `Dockerfile` for the visual tests is tiny:
+
+```dockerfile
+FROM mcr.microsoft.com/playwright:v1.59.1-noble
+WORKDIR /app
+COPY package.json package-lock.json .npmrc ./
+RUN npm ci
+COPY .storybook/modes.ts ./.storybook/
+COPY tests/visual/visual.spec.ts ./tests/visual/
+COPY tests/visual/playwright.config.ts ./tests/visual/
+CMD ["npx", "playwright", "test", "--config=tests/visual/playwright.config.ts"]
+```
+
+Two things to note:
+
+- The base image is Microsoft's official `playwright` image, which already has the exact browser binaries Playwright expects.
+- The built Storybook (`storybook-static/`) and the screenshots directory (`tests/visual/__screenshots__/`) are mounted at run time rather than baked into the image. Baselines stay in git, the container stays cacheable.
+
+The npm scripts tie it together:
+
+```json
+{
+	"test:visual:build": "docker build -f tests/visual/Dockerfile -t michalkolacz.com-visual .",
+	"test:visual": "npm run build-storybook && docker run --rm -v ./storybook-static:/app/storybook-static -v ./tests/visual/__screenshots__:/app/tests/visual/__screenshots__ michalkolacz.com-visual",
+	"test:visual:update": "npm run build-storybook && docker run --rm -v ./storybook-static:/app/storybook-static -v ./tests/visual/__screenshots__:/app/tests/visual/__screenshots__ michalkolacz.com-visual npx playwright test --update-snapshots"
+}
+```
+
+Three scripts, three jobs:
+
+- `test:visual:build` — build the container once.
+- `test:visual` — run the suite and fail on drift.
+- `test:visual:update` — intentionally overwrite baselines after a UI change I actually want.
+
+## The Workflow
+
+Day to day, it feels like this:
+
+- [x] Change a component
+- [x] Run `npm run test:visual`
+- [ ] Open the HTML diff report if anything fails
+- [ ] If the change was intentional, run `test:visual:update`
+- [ ] Commit the new baseline alongside the code change
+
+The baselines sitting in git are the part that makes this whole thing work. They turn "does this component still look right?" — a subjective, human question — into "does this PR change any pixels?" — a flat yes/no the CI pipeline can answer.
+
+## What VRT Won't Do For You
+
+VRT is not a replacement for unit tests or accessibility tests. It won't tell you that a button is missing a label, or that a form submits the wrong payload. It will only tell you that something _looks_ different.
+
+Treat it as a safety net under the rest of your test suite. Combined with Storybook stories — which you probably already have if you care about a component library at all — it is one of the highest-leverage pieces of tooling I have added to this project.
+
+If you already have Storybook set up, you are maybe a hundred lines of code away from having this too. Steal my config.
