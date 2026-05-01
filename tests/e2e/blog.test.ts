@@ -129,3 +129,49 @@ test('Blog post headings have anchor links', async ({ page, navigate }) => {
 	const anchor = heading.getByRole('link')
 	await expect(anchor).toHaveAttribute('href', '#the-problem-with-ui-changes')
 })
+
+test('Blog post page has JSON-LD structured data', async ({
+	page,
+	navigate,
+}) => {
+	await navigate('/blog/:slug', { slug: 'visual-regression-testing' })
+
+	// eslint-disable-next-line playwright/no-raw-locators
+	const jsonLd = page.locator('script[type="application/ld+json"]')
+	await expect(jsonLd).toHaveCount(1)
+
+	const content = await jsonLd.textContent()
+	const parsed = JSON.parse(content ?? '{}') as Record<string, unknown>
+
+	expect(parsed['@type']).toBe('Article')
+	expect(parsed.headline).toContain('Visual Regression Testing')
+	expect((parsed.author as Record<string, string>)?.name).toBe('Michal Kolacz')
+})
+
+test('Blog listing page has og:image meta tag', async ({ page, navigate }) => {
+	await navigate('/blog')
+
+	await expect(getMetaTag(page, 'og:image')).toHaveAttribute(
+		'content',
+		/\/og-image\.png$/,
+	)
+})
+
+test('Sitemap includes blog index and blog post URLs', async ({
+	page,
+	baseURL,
+}) => {
+	const response = await page.request.get(`${baseURL}sitemap.xml`)
+
+	expect(response.status()).toBe(200)
+	expect(response.headers()['content-type']).toContain('application/xml')
+
+	const body = await response.text()
+	expect(body).toContain('<?xml')
+	expect(body).toContain('<urlset')
+
+	const siteUrl = baseURL?.replace(/\/$/, '') ?? ''
+	expect(body).toContain(`<loc>${siteUrl}/</loc>`)
+	expect(body).toContain(`<loc>${siteUrl}/blog</loc>`)
+	expect(body).toContain(`<loc>${siteUrl}/blog/visual-regression-testing</loc>`)
+})

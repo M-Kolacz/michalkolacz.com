@@ -50,10 +50,14 @@ export const links: Route.LinksFunction = () => {
 	].filter(Boolean)
 }
 
-export const meta: Route.MetaFunction = ({ data }) => {
+export const meta: Route.MetaFunction = () => {
 	return [
-		{ title: data ? 'Epic Notes' : 'Error | Epic Notes' },
-		{ name: 'description', content: `Your own captain's log` },
+		{ title: 'Michal Kolacz' },
+		{
+			name: 'description',
+			content:
+				'Software engineer sharing thoughts on web development, TypeScript, and building great products.',
+		},
 	]
 }
 

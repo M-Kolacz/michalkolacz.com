@@ -1,23 +1,19 @@
+import { invariantResponse } from '@epic-web/invariant'
 import { getMDXComponent } from 'mdx-bundler/client'
 import { Img } from 'openimg/react'
 import { useMemo } from 'react'
-import { data } from 'react-router'
 import { z } from 'zod'
 import { getBlog } from '#app/utils/blog/pipeline.server.ts'
 import { type Route } from './+types/blog.$slug.js'
 
-export const meta: Route.MetaFunction = ({ data, matches }) => {
-	const rootData = matches[0]?.data as
-		| { requestInfo: { origin: string } }
-		| undefined
-	const origin = rootData?.requestInfo.origin ?? ''
+export const meta: Route.MetaFunction = ({ matches, loaderData }) => {
+	const rootMatch = matches[0]
+	const origin = rootMatch?.loaderData.requestInfo.origin ?? ''
 
-	if (!data) {
-		return [{ title: 'Post Not Found' }]
-	}
-
-	const { frontmatter, bannerImage } = data
-	const ogImage = bannerImage ? `${origin}${bannerImage}` : null
+	const { frontmatter, bannerImage } = loaderData
+	const ogImage = bannerImage
+		? `${origin}${bannerImage}`
+		: `${origin}/og-image.png`
 
 	return [
 		{ title: `${frontmatter.title} | Michal Kolacz` },
@@ -25,7 +21,20 @@ export const meta: Route.MetaFunction = ({ data, matches }) => {
 		{ property: 'og:title', content: frontmatter.title },
 		{ property: 'og:description', content: frontmatter.description },
 		{ property: 'og:type', content: 'article' },
-		...(ogImage ? [{ property: 'og:image', content: ogImage }] : []),
+		{ property: 'og:image', content: ogImage },
+		{
+			'script:ld+json': {
+				'@context': 'https://schema.org',
+				'@type': 'Article',
+				headline: frontmatter.title,
+				description: frontmatter.description,
+				datePublished: frontmatter.date,
+				author: {
+					'@type': 'Person',
+					name: 'Michal Kolacz',
+				},
+			},
+		},
 	]
 }
 
@@ -33,15 +42,15 @@ const SlugSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
 
 export async function loader({ params }: Route.LoaderArgs) {
 	const parsed = SlugSchema.safeParse(params.slug)
-	if (!parsed.success) {
-		throw data(null, { status: 404 })
-	}
+	invariantResponse(parsed.success, 'Invalid slug', { status: 404 })
 	const slug = parsed.data
+
 	return getBlog()
 		.getPost(slug)
-		.catch((error) => {
-			console.error(error)
-			throw data(null, { status: 404 })
+		.catch(() => {
+			throw new Response(`Blog post with slug ${slug} not found`, {
+				status: 404,
+			})
 		})
 }
 
