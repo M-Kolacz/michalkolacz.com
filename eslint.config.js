@@ -33,6 +33,8 @@ export default [
 			'**/.react-router/**',
 			'**/.wrangler/**',
 			'**/worker-configuration.d.ts',
+			// Generated files
+			'app/components/ui/icons/types.ts',
 		],
 	},
 
