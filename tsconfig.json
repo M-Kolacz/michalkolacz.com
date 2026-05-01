@@ -1,5 +1,5 @@
 {
-	"include": ["**/*.ts", "**/*.tsx", ".react-router/types/**/*", ".storybook/**/*.ts"],
+	"include": ["**/*.ts", "**/*.tsx", ".react-router/types/**/*", ".storybook/**/*.ts", ".sandcastle/**/*.ts"],
 	"compilerOptions": {
 		"isolatedModules": true,
 		"jsx": "react-jsx",
