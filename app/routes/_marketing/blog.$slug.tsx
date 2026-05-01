@@ -48,7 +48,7 @@ export async function loader({ params }: Route.LoaderArgs) {
 	return getBlog()
 		.getPost(slug)
 		.catch(() => {
-			throw invariantResponse(parsed.success, 'Blog post not found', {
+			throw new Response(`Blog post with slug ${slug} not found`, {
 				status: 404,
 			})
 		})
