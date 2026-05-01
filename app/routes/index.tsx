@@ -6,7 +6,29 @@ import { type Route } from './+types/index.ts'
 
 const LATEST_POSTS_LIMIT = 3
 
-export const meta: Route.MetaFunction = () => [{ title: 'Michal Kolacz' }]
+export const meta: Route.MetaFunction = ({ matches }) => {
+	const rootData = matches[0]?.data as
+		| { requestInfo: { origin: string } }
+		| undefined
+	const origin = rootData?.requestInfo.origin ?? ''
+
+	return [
+		{ title: 'Michal Kolacz' },
+		{
+			name: 'description',
+			content:
+				'Software engineer sharing thoughts on web development, TypeScript, and building great products.',
+		},
+		{ property: 'og:title', content: 'Michal Kolacz' },
+		{
+			property: 'og:description',
+			content:
+				'Software engineer sharing thoughts on web development, TypeScript, and building great products.',
+		},
+		{ property: 'og:type', content: 'website' },
+		{ property: 'og:image', content: `${origin}/og-image.png` },
+	]
+}
 
 export async function loader() {
 	const posts = await getBlog().getListings()

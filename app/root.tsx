@@ -52,8 +52,12 @@ export const links: Route.LinksFunction = () => {
 
 export const meta: Route.MetaFunction = ({ data }) => {
 	return [
-		{ title: data ? 'Epic Notes' : 'Error | Epic Notes' },
-		{ name: 'description', content: `Your own captain's log` },
+		{ title: data ? 'Michal Kolacz' : 'Error | Michal Kolacz' },
+		{
+			name: 'description',
+			content:
+				'Software engineer sharing thoughts on web development, TypeScript, and building great products.',
+		},
 	]
 }
 

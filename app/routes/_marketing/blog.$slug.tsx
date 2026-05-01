@@ -17,7 +17,9 @@ export const meta: Route.MetaFunction = ({ data, matches }) => {
 	}
 
 	const { frontmatter, bannerImage } = data
-	const ogImage = bannerImage ? `${origin}${bannerImage}` : null
+	const ogImage = bannerImage
+		? `${origin}${bannerImage}`
+		: `${origin}/og-image.png`
 
 	return [
 		{ title: `${frontmatter.title} | Michal Kolacz` },
@@ -25,8 +27,32 @@ export const meta: Route.MetaFunction = ({ data, matches }) => {
 		{ property: 'og:title', content: frontmatter.title },
 		{ property: 'og:description', content: frontmatter.description },
 		{ property: 'og:type', content: 'article' },
-		...(ogImage ? [{ property: 'og:image', content: ogImage }] : []),
+		{ property: 'og:image', content: ogImage },
+		{
+			'script:ld+json': {
+				'@context': 'https://schema.org',
+				'@type': 'Article',
+				headline: frontmatter.title,
+				description: frontmatter.description,
+				datePublished: frontmatter.date,
+				author: {
+					'@type': 'Person',
+					name: 'Michal Kolacz',
+				},
+			},
+		},
 	]
+}
+
+export const handle = {
+	async getSitemapEntries(_request: Request) {
+		const posts = await getBlog().getListings()
+		return posts.map((post) => ({
+			route: `/blog/${post.slug}`,
+			lastmod: new Date(post.date).toISOString().split('T')[0],
+			priority: 0.7,
+		}))
+	},
 }
 
 const SlugSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
