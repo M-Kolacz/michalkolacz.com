@@ -1,22 +1,16 @@
+import { invariantResponse } from '@epic-web/invariant'
 import { getMDXComponent } from 'mdx-bundler/client'
 import { Img } from 'openimg/react'
 import { useMemo } from 'react'
-import { data } from 'react-router'
 import { z } from 'zod'
 import { getBlog } from '#app/utils/blog/pipeline.server.ts'
 import { type Route } from './+types/blog.$slug.js'
 
-export const meta: Route.MetaFunction = ({ data, matches }) => {
-	const rootData = matches[0]?.data as
-		| { requestInfo: { origin: string } }
-		| undefined
-	const origin = rootData?.requestInfo.origin ?? ''
+export const meta: Route.MetaFunction = ({ matches, loaderData }) => {
+	const rootMatch = matches[0]
+	const origin = rootMatch?.loaderData.requestInfo.origin ?? ''
 
-	if (!data) {
-		return [{ title: 'Post Not Found' }]
-	}
-
-	const { frontmatter, bannerImage } = data
+	const { frontmatter, bannerImage } = loaderData
 	const ogImage = bannerImage
 		? `${origin}${bannerImage}`
 		: `${origin}/og-image.png`
@@ -44,30 +38,19 @@ export const meta: Route.MetaFunction = ({ data, matches }) => {
 	]
 }
 
-export const handle = {
-	async getSitemapEntries(_request: Request) {
-		const posts = await getBlog().getListings()
-		return posts.map((post) => ({
-			route: `/blog/${post.slug}`,
-			lastmod: new Date(post.date).toISOString().split('T')[0],
-			priority: 0.7,
-		}))
-	},
-}
-
 const SlugSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
 
 export async function loader({ params }: Route.LoaderArgs) {
 	const parsed = SlugSchema.safeParse(params.slug)
-	if (!parsed.success) {
-		throw data(null, { status: 404 })
-	}
+	invariantResponse(parsed.success, 'Invalid slug', { status: 404 })
 	const slug = parsed.data
+
 	return getBlog()
 		.getPost(slug)
-		.catch((error) => {
-			console.error(error)
-			throw data(null, { status: 404 })
+		.catch(() => {
+			throw invariantResponse(parsed.success, 'Blog post not found', {
+				status: 404,
+			})
 		})
 }
 
