@@ -54,7 +54,6 @@ export default defineConfig((config) => ({
 		IS_STORYBOOK ? null : envOnlyMacros(),
 		tailwindcss(),
 		IS_STORYBOOK ? null : reactRouterDevTools(),
-
 		iconsSpritesheet({
 			inputDir: './app/components/ui/icons/svg-icons',
 			outputDir: './app/components/ui/icons',
@@ -110,7 +109,7 @@ export default defineConfig((config) => ({
 					},
 					setupFiles: ['.storybook/vitest.setup.ts'],
 					coverage: {
-						include: ['app/**/*.stories.tsx'],
+						include: ['app/**/*.tsx'],
 						all: true,
 					},
 				},

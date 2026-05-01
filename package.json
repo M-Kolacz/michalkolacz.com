@@ -31,7 +31,7 @@
     "lint": "eslint . --fix --max-warnings 0",
     "test": "vitest",
     "prepare": "husky",
-    "test:coverage": "vitest run --coverage --reporter=junit --outputFile=test-report.junit.xml",
+    "test:coverage": "vitest run --coverage --reporter=default --reporter=junit --outputFile=test-report.junit.xml",
     "test:e2e": "npm run test:e2e:dev --silent",
     "test:e2e:dev": "playwright test --ui",
     "test:e2e:install": "npx playwright install --with-deps chromium",
