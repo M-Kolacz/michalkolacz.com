@@ -27,6 +27,7 @@
     "build": "react-router build",
     "start": "cross-env NODE_ENV=production node index.ts",
     "start:mocks": "cross-env NODE_ENV=production MOCKS=true node index.ts",
+    "sandcastle": "npx tsx .sandcastle/main.ts",
     "format": "prettier --write .",
     "lint": "eslint . --fix --max-warnings 0",
     "test": "vitest",
@@ -172,8 +173,15 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@ai-hero/sandcastle": "^0.5.6",
     "@chromatic-com/storybook": "^5.0.1",
     "@codecov/vite-plugin": "^1.9.1",
+    "@effect/cluster": "^0.58.2",
+    "@effect/experimental": "^0.60.0",
+    "@effect/rpc": "^0.75.1",
+    "@effect/sql": "^0.51.1",
+    "@effect/typeclass": "^0.40.0",
+    "@effect/workflow": "^0.18.1",
     "@faker-js/faker": "^10.2.0",
     "@playwright/test": "^1.58.0",
     "@react-router/dev": "^7.13.0",
