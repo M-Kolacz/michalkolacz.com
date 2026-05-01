@@ -15,7 +15,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 		...STATIC_ROUTES.map(
 			({ path, priority }) => `
   <url>
-    <loc>${siteUrl}${path === '/' ? '' : path}</loc>
+    <loc>${siteUrl}${path}</loc>
     <priority>${priority}</priority>
   </url>`,
 		),

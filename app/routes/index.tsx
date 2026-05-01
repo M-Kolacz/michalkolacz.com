@@ -7,10 +7,8 @@ import { type Route } from './+types/index.ts'
 const LATEST_POSTS_LIMIT = 3
 
 export const meta: Route.MetaFunction = ({ matches }) => {
-	const rootData = matches[0]?.data as
-		| { requestInfo: { origin: string } }
-		| undefined
-	const origin = rootData?.requestInfo.origin ?? ''
+	const rootData = matches[0].loaderData
+	const origin = rootData?.requestInfo.origin
 
 	return [
 		{ title: 'Michal Kolacz' },

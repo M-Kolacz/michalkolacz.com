@@ -50,9 +50,9 @@ export const links: Route.LinksFunction = () => {
 	].filter(Boolean)
 }
 
-export const meta: Route.MetaFunction = ({ data }) => {
+export const meta: Route.MetaFunction = () => {
 	return [
-		{ title: data ? 'Michal Kolacz' : 'Error | Michal Kolacz' },
+		{ title: 'Michal Kolacz' },
 		{
 			name: 'description',
 			content:

@@ -4,10 +4,8 @@ import { getBlog } from '#app/utils/blog/pipeline.server.ts'
 import { type Route } from './+types/blog._index.js'
 
 export const meta: Route.MetaFunction = ({ matches }) => {
-	const rootData = matches[0]?.data as
-		| { requestInfo: { origin: string } }
-		| undefined
-	const origin = rootData?.requestInfo.origin ?? ''
+	const rootData = matches[0].loaderData
+	const origin = rootData.requestInfo.origin
 
 	return [
 		{ title: 'Blog | Michal Kolacz' },

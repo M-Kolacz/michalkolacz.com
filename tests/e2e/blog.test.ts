@@ -171,6 +171,7 @@ test('Sitemap includes blog index and blog post URLs', async ({
 	expect(body).toContain('<urlset')
 
 	const siteUrl = baseURL?.replace(/\/$/, '') ?? ''
+	expect(body).toContain(`<loc>${siteUrl}/</loc>`)
 	expect(body).toContain(`<loc>${siteUrl}/blog</loc>`)
 	expect(body).toContain(`<loc>${siteUrl}/blog/visual-regression-testing</loc>`)
 })
