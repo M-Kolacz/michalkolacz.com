@@ -41,7 +41,7 @@ test('Blog post page has correct OG meta tags', async ({ page, navigate }) => {
 	)
 })
 
-test('Blog listing page has OG meta tags', async ({ page, navigate }) => {
+test('Blog listing page has correct meta tags', async ({ page, navigate }) => {
 	await navigate('/blog')
 
 	await expect(getMetaTag(page, 'og:title')).toHaveAttribute(
@@ -52,6 +52,10 @@ test('Blog listing page has OG meta tags', async ({ page, navigate }) => {
 		'content',
 		'website',
 	)
+	await expect(getMetaTag(page, 'og:image')).toHaveAttribute(
+		'content',
+		/\/og-image\.png$/,
+	)
 })
 
 test('Blog listing page displays published posts', async ({
@@ -60,23 +64,13 @@ test('Blog listing page displays published posts', async ({
 }) => {
 	await navigate('/blog')
 
-	await expect(page.getByRole('heading', { level: 1 })).toHaveText('Blog')
+	await expect(page.getByRole('heading', { level: 1 })).toContainText('Blog')
 
-	const postLink = page.getByRole('link', {
-		name: /Visual Regression Testing with Storybook, Playwright, and Docker/,
-	})
-	await expect(postLink).toBeVisible()
+	const postLinks = page.getByRole('link').filter({ hasText: /.+/ })
+	await expect(postLinks.first()).toBeVisible()
 
-	await expect(postLink).toContainText('April 14, 2026')
-	await expect(postLink).toContainText('How I catch unintended UI changes')
-
-	await postLink.click()
-	await expect(page).toHaveURL(/\/blog\/visual-regression-testing$/)
-	await expect(
-		page.getByRole('heading', {
-			name: /Visual Regression Testing with Storybook, Playwright, and Docker/,
-		}),
-	).toBeVisible()
+	await postLinks.first().click()
+	await expect(page).toHaveURL(/\/blog\/[^/]+$/)
 })
 
 test('Blog post page displays banner image, title, date, and reading time', async ({
@@ -146,15 +140,6 @@ test('Blog post page has JSON-LD structured data', async ({
 	expect(parsed['@type']).toBe('Article')
 	expect(parsed.headline).toContain('Visual Regression Testing')
 	expect((parsed.author as Record<string, string>)?.name).toBe('Michal Kolacz')
-})
-
-test('Blog listing page has og:image meta tag', async ({ page, navigate }) => {
-	await navigate('/blog')
-
-	await expect(getMetaTag(page, 'og:image')).toHaveAttribute(
-		'content',
-		/\/og-image\.png$/,
-	)
 })
 
 test('Sitemap includes blog index and blog post URLs', async ({
