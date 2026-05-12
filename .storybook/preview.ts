@@ -1,5 +1,5 @@
 import { type Preview } from '@storybook/react-vite'
-import { withAppShell } from './decorators.tsx'
+import { withAppShell, withRouter } from './decorators.tsx'
 import '../app/styles/tailwind.css'
 import '../app/styles/font.css'
 
@@ -22,6 +22,10 @@ const preview: Preview = {
 
 			if (context.title.toLowerCase().includes('pages')) {
 				return withAppShell(Story, context)
+			}
+
+			if (context.title.startsWith('Components/')) {
+				return withRouter(Story, context)
 			}
 
 			return Story()
