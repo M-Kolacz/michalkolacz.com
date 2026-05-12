@@ -5,6 +5,13 @@ test('Homepage displays correctly', async ({ page, navigate }) => {
 	await navigate('/')
 
 	await expect(page.getByText(t('homepage.hero.heading'))).toBeVisible()
+	await expect(page.getByText(t('homepage.hero.subheading'))).toBeVisible()
+	await expect(page.getByAltText(t('homepage.hero.imageAlt'))).toBeVisible()
+	await expect(page.getByText(t('homepage.latestPosts.heading'))).toBeVisible()
+	await expect(page.getByRole('listitem').first()).toBeVisible()
+	await expect(
+		page.getByRole('link', { name: t('homepage.latestPosts.viewAll') }),
+	).toBeVisible()
 })
 
 test('Homepage has correct meta tags', async ({ page, navigate }) => {
