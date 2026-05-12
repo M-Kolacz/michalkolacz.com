@@ -9,7 +9,9 @@ test('Homepage displays correctly', async ({ page, navigate }) => {
 	await expect(page.getByAltText(t('homepage.hero.imageAlt'))).toBeVisible()
 	await expect(page.getByText(t('homepage.latestPosts.heading'))).toBeVisible()
 	await expect(page.getByRole('listitem').first()).toBeVisible()
-	await expect(page.getByText(t('homepage.latestPosts.viewAll'))).toBeVisible()
+	await expect(
+		page.getByRole('link', { name: t('homepage.latestPosts.viewAll') }),
+	).toBeVisible()
 })
 
 test('Homepage has correct meta tags', async ({ page, navigate }) => {
