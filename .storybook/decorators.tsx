@@ -7,6 +7,7 @@ export type WithRouterParameters = {
 	loaderData?: Record<string, unknown>
 	initialEntries?: string[]
 	siblingRoutes?: Array<{ path: string; Component?: React.ComponentType }>
+	skip?: boolean
 }
 
 export const withRouter: Decorator = (Story, context) => {

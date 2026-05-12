@@ -5,6 +5,7 @@ import { GeneralErrorBoundary } from './error-boundary'
 const meta = {
 	title: 'Components/GeneralErrorBoundary',
 	component: GeneralErrorBoundary,
+	parameters: { router: { skip: true } },
 } satisfies Meta<typeof GeneralErrorBoundary>
 
 export default meta
