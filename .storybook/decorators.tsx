@@ -2,6 +2,30 @@ import { type Decorator } from '@storybook/react-vite'
 import { createRoutesStub } from 'react-router'
 import AppLayout from '../app/routes/_layout.tsx'
 
+export type WithRouterParameters = {
+	loaderData?: Record<string, unknown>
+}
+
+export const withRouter: Decorator = (Story, context) => {
+	const { loaderData } = (context.parameters?.router ?? {}) as WithRouterParameters
+
+	const Stub = createRoutesStub([
+		{
+			id: 'root',
+			path: '/',
+			loader: loaderData ? () => loaderData : undefined,
+			children: [
+				{
+					index: true,
+					Component: Story,
+				},
+			],
+		},
+	])
+
+	return <Stub />
+}
+
 const mockRootLoaderData = {
 	user: null,
 	requestInfo: {
