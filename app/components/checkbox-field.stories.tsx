@@ -51,13 +51,21 @@ export const Interaction: Story = {
 	name: 'Interaction – check and uncheck',
 	args: {},
 	play: async ({ canvasElement }) => {
+		// Arrange
 		const canvas = within(canvasElement)
 		const checkbox = canvas.getByRole('checkbox')
-
 		await expect(checkbox).toHaveAttribute('aria-checked', 'false')
+
+		// Act
 		await userEvent.click(checkbox)
+
+		// Assert
 		await expect(checkbox).toHaveAttribute('aria-checked', 'true')
+
+		// Act
 		await userEvent.click(checkbox)
+
+		// Assert
 		await expect(checkbox).toHaveAttribute('aria-checked', 'false')
 	},
 }
