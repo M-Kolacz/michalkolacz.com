@@ -67,11 +67,13 @@ export default defineConfig((config) => ({
 		MODE === 'production' && process.env.SENTRY_AUTH_TOKEN
 			? sentryReactRouter(sentryConfig, config)
 			: null,
-		codecovVitePlugin({
-			enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
-			bundleName: 'michalkolacz.com',
-			uploadToken: process.env.CODECOV_TOKEN,
-		}),
+		IS_STORYBOOK
+			? null
+			: codecovVitePlugin({
+					enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+					bundleName: 'michalkolacz.com',
+					uploadToken: process.env.CODECOV_TOKEN,
+				}),
 	],
 	test: {
 		projects: [
