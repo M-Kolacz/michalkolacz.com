@@ -4,7 +4,7 @@ import { TextareaField } from './forms'
 const meta = {
 	title: 'Components/Forms/TextareaField',
 	component: TextareaField,
-	parameters: { layout: 'padded' },
+	parameters: { layout: 'centered' },
 } satisfies Meta<typeof TextareaField>
 
 export default meta

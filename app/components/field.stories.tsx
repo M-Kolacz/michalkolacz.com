@@ -5,7 +5,7 @@ import { Field } from './forms'
 const meta = {
 	title: 'Components/Forms/Field',
 	component: Field,
-	parameters: { layout: 'padded' },
+	parameters: { layout: 'centered' },
 } satisfies Meta<typeof Field>
 
 export default meta

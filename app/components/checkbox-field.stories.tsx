@@ -29,7 +29,7 @@ function CheckboxFieldWrapper({
 const meta = {
 	title: 'Components/Forms/CheckboxField',
 	component: CheckboxFieldWrapper,
-	parameters: { layout: 'padded' },
+	parameters: { layout: 'centered' },
 } satisfies Meta<typeof CheckboxFieldWrapper>
 
 export default meta

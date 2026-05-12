@@ -4,7 +4,7 @@ import { OTPField } from './forms'
 const meta = {
 	title: 'Components/Forms/OTPField',
 	component: OTPField,
-	parameters: { layout: 'padded' },
+	parameters: { layout: 'centered' },
 } satisfies Meta<typeof OTPField>
 
 export default meta
