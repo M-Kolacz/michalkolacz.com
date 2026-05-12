@@ -65,8 +65,9 @@ test('Blog listing page displays published posts', async ({
 	await navigate('/blog')
 
 	await expect(page.getByRole('heading', { level: 1 })).toContainText('Blog')
+	const list = page.getByRole('list')
 
-	const postLinks = page.getByRole('link').filter({ hasText: /.+/ })
+	const postLinks = list.getByRole('link').filter({ hasText: /.+/ })
 	await expect(postLinks.first()).toBeVisible()
 
 	await postLinks.first().click()
@@ -119,7 +120,6 @@ test('Blog post headings have anchor links', async ({ page, navigate }) => {
 	})
 	await expect(heading).toBeVisible()
 
-	// rehype-slug adds id, rehype-autolink-headings wraps content in <a>
 	const anchor = heading.getByRole('link')
 	await expect(anchor).toHaveAttribute('href', '#the-problem-with-ui-changes')
 })
@@ -135,11 +135,15 @@ test('Blog post page has JSON-LD structured data', async ({
 	await expect(jsonLd).toHaveCount(1)
 
 	const content = await jsonLd.textContent()
-	const parsed = JSON.parse(content ?? '{}') as Record<string, unknown>
+	const parsed = JSON.parse(content ?? '{}') as {
+		'@type': string
+		headline: string
+		author: { name: string }
+	}
 
 	expect(parsed['@type']).toBe('Article')
 	expect(parsed.headline).toContain('Visual Regression Testing')
-	expect((parsed.author as Record<string, string>)?.name).toBe('Michal Kolacz')
+	expect(parsed.author.name).toBe('Michal Kolacz')
 })
 
 test('Sitemap includes blog index and blog post URLs', async ({
