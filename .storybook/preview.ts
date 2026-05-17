@@ -24,7 +24,7 @@ const preview: Preview = {
 				return withAppShell(Story, context)
 			}
 
-			if (context.title.startsWith('Components/')) {
+			if (context.title.startsWith('Components/') && !context.parameters?.router?.skip) {
 				return withRouter(Story, context)
 			}
 
